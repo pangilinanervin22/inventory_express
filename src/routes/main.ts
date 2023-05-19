@@ -8,7 +8,7 @@ main.get("/main/", (req: Request, res: Response) => {
     res.send(`Main router`);
 });
 
-main.get("/api/", (req: Request, res: Response) => {
+main.get("/main/:any", (req: Request, res: Response) => {
     res.send("Hello World!");
 });
 
