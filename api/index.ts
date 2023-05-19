@@ -1,13 +1,14 @@
+require("dotenv").config();
+
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import dotenv from 'dotenv'
-// import main from './routes/main'
-import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
-import main from "./routes/main";
 
-const config: any = dotenv.config().parsed
+// import main from './routes/main'
+import { errorHandler, notFoundHandler } from "../src/middleware/errorHandler";
+import main from "../src/routes/main";
+
 const app: Application = express()
 
 app.use(express.json());
@@ -28,14 +29,11 @@ app.get("/api/", (req, res) => {
 });
 
 //routes
-app.use("/api/", main)
+app.use(main)
 
 //error handlers
 app.use(errorHandler);
 app.use(notFoundHandler);
 
 //server start
-app.listen(config.PORT, () => {
-    console.log(`Example app listening on port ${config.PORT}`);
-    console.log(config);
-});
+module.exports = app;
