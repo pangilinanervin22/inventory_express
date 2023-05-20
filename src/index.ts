@@ -1,41 +1,27 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
+
 // import main from './routes/main'
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
-import main from "./routes/main";
-import { randomInt } from "crypto";
+import mainRouter from "./routes/main";
+import routerProduct from "./routes/product";
 
-const config: any = dotenv.config().parsed
-const app: Application = express()
+const config: any = dotenv.config().parsed;
+const app: Application = express();
 
+// third party middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));
 
-app.get("/api/random", (req, res) => {
-    const data = ["Java", "Javascript", "Python", "C++", "Cobol"]
-    res.send("Hello " + data[randomInt(data.length)]);
-});
-
-app.get("/api/:message/", (req: Request, res: Response) => {
-    const data = req.params.message;
-    if (data == "error") throw new Error("Sample Error");
-
-    res.send(`Message ` + req.params.message);
-});
-
-app.get("/api/", (req, res) => {
-    const data = ["Java", "Javascript", "Python", "C++", "Cobol"]
-    res.send("Root ");
-});
-
 //routes
-app.use("/api/", main)
+app.use("/api/main/", mainRouter);
+app.use("/api/product/", routerProduct)
 
 //error handlers
 app.use(errorHandler);

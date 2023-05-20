@@ -1,15 +1,13 @@
 import express, { Request, Response } from "express";
 
-const main = express.Router();
+const mainRouter = express.Router();
 
-main.get("/main/", (req: Request, res: Response) => {
-
-
+mainRouter.get("/", (req: Request, res: Response) => {
     res.send(`Main router`);
 });
 
-main.get("/main/:any", (req: Request, res: Response) => {
+mainRouter.get("/:any", (req: Request, res: Response) => {
     res.send("Hello World!");
 });
 
-export default main
+export default mainRouter
