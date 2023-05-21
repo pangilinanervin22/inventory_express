@@ -21,7 +21,7 @@ app.use(morgan("dev"));
 
 //routes
 app.use("/api/main/", mainRouter);
-app.use("/api/product/", routerProduct)
+app.use("/api/product/", routerProduct);
 
 //error handlers
 app.use(errorHandler);
@@ -29,6 +29,6 @@ app.use(notFoundHandler);
 
 //server start
 app.listen(config.PORT, () => {
-    console.log(`Example app listening on port ${config.PORT}`);
-    console.log(config);
+	console.log(`Example app listening on port ${config.PORT}`);
+	console.log(config);
 });
