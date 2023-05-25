@@ -25,8 +25,7 @@ const createEmployee = `CREATE TABLE IF NOT EXISTS Employee (
     PRIMARY KEY(employee_id)
 );`;
 
-const createHistory
-    = `CREATE TABLE IF NOT EXISTS History(
+const createHistory = `CREATE TABLE IF NOT EXISTS History(
     history_id VARCHAR(255),
     employee_id VARCHAR(255),
     name VARCHAR(70) NOT NULL,
