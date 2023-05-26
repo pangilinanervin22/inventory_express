@@ -11,8 +11,8 @@ const pool = mysql.createPool({
 //function that will use to execute sql querry
 //Sample:
 //sqlExe("Select * From product");
-//sqlExe("Select * From ??", "product");
-//sqlExe("Select * From ??", ["product"]);
+//sqlExe("Select * From ?", "product");
+//sqlExe("Select * From ?", ["product"]);
 export const sqlExe = (query: string, values?: any) =>
 	new Promise<any[]>((resolve, reject) => {
 		//get a connection in the pool
@@ -21,7 +21,10 @@ export const sqlExe = (query: string, values?: any) =>
 
 			//executing queries
 			await connection.query({ sql: query, values }, async function (errQuery, result, fields) {
-				if (errQuery) reject(errQuery);
+				if (errQuery) {
+					console.log(errQuery);
+					reject(errQuery);
+				}
 				resolve(result);
 			});
 

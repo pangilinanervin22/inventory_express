@@ -1,13 +1,14 @@
 import express, { Request, Response } from "express";
+import crypto from 'crypto'
 
 const mainRouter = express.Router();
 
-mainRouter.get("/", (req: Request, res: Response) => {
-	res.send(`Main router`);
+mainRouter.get("/random", (req: Request, res: Response) => {
+	res.send(crypto.randomUUID());
 });
 
-mainRouter.get("/:any", (req: Request, res: Response) => {
-	res.send("Hello World!");
+mainRouter.get("/", (req: Request, res: Response) => {
+	res.send("Inventory Express by Ervin Pangilinan");
 });
 
 export default mainRouter;

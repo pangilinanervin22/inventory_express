@@ -4,7 +4,19 @@ import { asyncHandle } from "../middleware/errorHandler";
 
 const routerProduct = express.Router();
 
-routerProduct.get("/", asyncHandle(product.getAllProduct));
-routerProduct.post("/", asyncHandle(product.addProduct));
+routerProduct.get("/gen", asyncHandle(product.generateProduct));
+routerProduct.delete("/name/:name", asyncHandle(product.deleteProductByName));
+
+routerProduct
+    .route("/")
+    .get(asyncHandle(product.getAllProduct))
+    .post(asyncHandle(product.addProduct))
+    .put(asyncHandle(product.updateProduct));
+
+routerProduct
+    .route("/:id")
+    .get(asyncHandle(product.getProductById))
+    .put(asyncHandle(product.updateProduct))
+    .delete(asyncHandle(product.deleteProductById));
 
 export default routerProduct;

@@ -27,7 +27,7 @@ app.use(rateLimit({
 }))
 
 //routes
-app.use("/api/main", mainRouter);
+app.use("/api", mainRouter);
 app.use("/api/product", routerProduct);
 
 //error handlers
