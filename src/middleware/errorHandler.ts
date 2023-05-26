@@ -5,7 +5,6 @@ export function asyncHandle(handler: Function) {
 		try {
 			await handler(req, res, next);
 		} catch (error) {
-			console.log(error);
 			next(error);
 		}
 	};
@@ -19,7 +18,7 @@ export const errorHandler = (
 ) => {
 	const status = err.status || 400;
 
-	res.status(status).send(err);
+	res.status(status).send(err.message);
 };
 
 export const notFoundHandler = (
