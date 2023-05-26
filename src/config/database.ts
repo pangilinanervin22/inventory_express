@@ -1,23 +1,40 @@
 import mysql from "mysql";
 
-var con = mysql.createConnection({
+// const connection = mysql.createConnection({
+// 	host: "localhost",
+// 	user: "root",
+// 	password: "",
+// 	database: "inventory",
+// });
+
+const pool = mysql.createPool({
+	connectionLimit: 10,
 	host: "localhost",
 	user: "root",
 	password: "",
-	database: "test",
-});
+	database: "inventory",
+})
 
-con.connect(function (err) {
-	if (err) console.log(err.message);
-	else console.log("Connected!");
-});
-
-export const sqlExe = (query: string) =>
+export const sqlExe = (query: string, values?: any) =>
 	new Promise<any[]>((resolve, reject) => {
-		con.query(query, async function (err, result, fields) {
-			if (err) reject(err.message);
-			// console.log(result);
+		//creating a connection
+		pool.getConnection(async function (errConnection, connection) {
+			if (errConnection) reject(errConnection);
 
-			resolve(result);
+			//executing queries
+			await connection.query({ sql: query, values }, async function (errQuery, result, fields) {
+				if (errQuery) reject(errQuery);
+				resolve(result);
+			});
+
+			//closing a connection
+			connection.release();
 		});
+
 	});
+
+function sleep(second: number) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, second);
+	});
+}
