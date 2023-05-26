@@ -8,14 +8,14 @@ const pool = mysql.createPool({
 	database: "inventory",
 })
 
-//function that will use to execute querry
+//function that will use to execute sql querry
 //Sample:
 //sqlExe("Select * From product");
 //sqlExe("Select * From ??", "product");
 //sqlExe("Select * From ??", ["product"]);
 export const sqlExe = (query: string, values?: any) =>
 	new Promise<any[]>((resolve, reject) => {
-		//creating a connection
+		//get a connection in the pool
 		pool.getConnection(async function (errConnection, connection) {
 			if (errConnection) reject(errConnection);
 

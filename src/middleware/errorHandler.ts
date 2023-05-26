@@ -19,7 +19,7 @@ export const errorHandler = (
 ) => {
 	const status = err.status || 400;
 
-	res.status(status).send(err.message);
+	res.status(status).send(err);
 };
 
 export const notFoundHandler = (
