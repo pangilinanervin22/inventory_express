@@ -1,12 +1,5 @@
 import mysql from "mysql";
 
-// const connection = mysql.createConnection({
-// 	host: "localhost",
-// 	user: "root",
-// 	password: "",
-// 	database: "inventory",
-// });
-
 const pool = mysql.createPool({
 	connectionLimit: 10,
 	host: "localhost",
@@ -15,6 +8,11 @@ const pool = mysql.createPool({
 	database: "inventory",
 })
 
+//function that will use to execute querry
+//Sample:
+//sqlExe("Select * From product");
+//sqlExe("Select * From ??", "product");
+//sqlExe("Select * From ??", ["product"]);
 export const sqlExe = (query: string, values?: any) =>
 	new Promise<any[]>((resolve, reject) => {
 		//creating a connection
