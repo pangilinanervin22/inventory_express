@@ -9,6 +9,7 @@ import rateLimit from 'express-rate-limit'
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import mainRouter from "./routes/main";
 import routerProduct from "./routes/product";
+import routerEmployee from "./routes/employee";
 
 const config: any = dotenv.config().parsed;
 const app: Application = express();
@@ -29,6 +30,7 @@ app.use(rateLimit({
 //routes
 app.use("/api", mainRouter);
 app.use("/api/product", routerProduct);
+app.use("/api/employee", routerEmployee);
 
 //error handlers
 app.use(errorHandler);

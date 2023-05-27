@@ -5,7 +5,6 @@ import joi from "joi";
 
 import { sqlExe } from "../config/database";
 import { Product } from "../model/types";
-import { compareObject } from "../utils";
 
 const joiProduct = joi.object({
     product_id: joi.string().max(255).optional(),
@@ -23,7 +22,7 @@ function generateProduct(): Product {
     };
 }
 
-async function isProductExist(product_id: string) {
+async function checkReturnProduct(product_id: string) {
     const data = await sqlExe(
         "SELECT * FROM `product` WHERE product_id = ?",
         product_id
@@ -43,13 +42,13 @@ export default {
     },
 
     async getProductById(req: Request, res: Response) {
-        const data = await isProductExist(req.params.id);
+        const data = await checkReturnProduct(req.params.id);
 
         res.send(data[0]).status(200);
     },
 
     async deleteProductById(req: Request, res: Response) {
-        await isProductExist(req.params.id);
+        await checkReturnProduct(req.params.id);
 
         await sqlExe("DELETE FROM `product` WHERE product_id = ?", req.params.id);
         res.send("Successfully deleted").status(200);
@@ -71,7 +70,7 @@ export default {
     async updateProduct(req: Request, res: Response) {
         const product: Product = { ...req.body };
 
-        const data = await isProductExist(req.params.id || product.product_id);
+        const data = await checkReturnProduct(req.params.id || product.product_id);
         const { error } = joiProduct.validate(req.body);
         if (error?.message) throw new Error(error?.message);
 
