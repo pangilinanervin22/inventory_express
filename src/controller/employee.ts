@@ -1,20 +1,11 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { faker } from "@faker-js/faker";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-
-import joi from "joi";
-
 import { sqlExe } from "../config/database";
 import { Employee } from "../model/types";
-
-const joiEmployee = joi.object({
-    name: joi.string().max(70).min(2).required(),
-    username: joi.string().max(70).min(5).required(),
-    password: joi.string().max(30).min(8).required(),
-    employee_id: joi.string().max(255).optional(),
-    is_admin: joi.boolean().optional(),
-});
+import { joiEmployee } from "../model/validation";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 function generateEmployee(): Employee {
     return {
@@ -38,6 +29,18 @@ async function findEmployeeById(employee_id: string) {
 
     if (data.length == 0) throw new Error("Invalid request: employee not exist");
     return data[0];
+}
+
+async function findEmployeeByUserName(input: string) {
+    const employeeDatabase = await sqlExe(
+        "SELECT * FROM `employee` WHERE username = ?", input);
+
+    console.log(employeeDatabase, input);
+
+    if (employeeDatabase.length == 0)
+        throw new Error("Invalid request: employee not exist");
+
+    return employeeDatabase[0];
 }
 
 // exported controllers
@@ -71,30 +74,30 @@ export default {
             is_admin: req.body.is_admin || false,
         };
 
+        const userNameExist = await findEmployeeByUserName(employee.username);
+        if (userNameExist)
+            throw new Error("Invalid request: Username is already use");
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(employee.password, salt);
 
         await sqlExe(
             "INSERT INTO `employee`(`employee_id`, `name`, `username`, `password`, `is_admin`) VALUES (?, ?, ?, ?, ?)",
-            [employee.employee_id, employee.name, employee.username, hashedPassword, booleanToInt(employee.is_admin)]
+            [
+                employee.employee_id,
+                employee.name,
+                employee.username,
+                hashedPassword,
+                booleanToInt(employee.is_admin),
+            ]
         );
 
-        res.send(employee).status(200);
-    },
-
-    async loginEmployee(req: Request, res: Response) {
-        const { error } = joiEmployee.validate({ ...req.body, name: "NotRequire" });
-        if (error?.message) throw new Error(error?.message);
-
-        const employee: Employee = { ...req.body };
-        const employeeDatabase = await findEmployeeById(employee.employee_id);
-        const passwordMatch = await bcrypt.compare(
-            employee.password,
-            employeeDatabase.password
+        const tokenCreate = jwt.sign({ employee_id: employee.employee_id, is_admin: employee.is_admin },
+            process.env.JWT_SECRET_KEY || "",
+            { expiresIn: "7d", }
         );
 
-        if (passwordMatch == false) throw new Error("Password don't match");
-        res.send(employeeDatabase).status(200);
+        res.send({ data: employee, token: tokenCreate }).status(200);
     },
 
     async updateEmployee(req: Request, res: Response) {
@@ -115,10 +118,45 @@ export default {
         const hashedPassword = await bcrypt.hash(employee.password, salt);
         await sqlExe(
             "UPDATE `employee` SET `name`= ?,`username`= ?,`password`= ?, `is_Admin` = ? WHERE `employee_id` = ?",
-            [employee.name, employee.username, hashedPassword, booleanToInt(employee.is_admin), RequestId]
+            [
+                employee.name,
+                employee.username,
+                hashedPassword,
+                booleanToInt(employee.is_admin),
+                RequestId,
+            ]
         );
 
         res.send([employeeDatabase, employee]).status(200);
+    },
+
+    async loginEmployee(req: Request, res: Response) {
+        const loginData = { ...req.body };
+
+        const employee = await findEmployeeByUserName(loginData.username);
+        const passwordMatch = await bcrypt.compare(
+            loginData.password,
+            employee.password
+        );
+
+        if (passwordMatch === false) throw new Error("Password don't match");
+        const tokenCreate = jwt.sign({ employee_id: employee.employee_id, is_admin: employee.is_admin },
+            process.env.JWT_SECRET_KEY || "",
+            { expiresIn: "7d", }
+        );
+
+        res.send(tokenCreate).status(200);
+    },
+
+    async authenticateEmployee(req: Request, res: Response, next: NextFunction) {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token)
+            return res.status(401).send('Authorization token missing');
+
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY || "") as JwtPayload;
+
+        console.log(decodedToken);
+        next();
     },
 
     // ALL controller below will be availbe only in development
@@ -138,7 +176,13 @@ export default {
 
         await sqlExe(
             "INSERT INTO `employee`(`employee_id`, `name`, `username`, `password`, `is_admin`) VALUES (?, ?, ?, ?, ?)",
-            [employee.employee_id, employee.name, employee.username, hashedPassword, booleanToInt(employee.is_admin)]
+            [
+                employee.employee_id,
+                employee.name,
+                employee.username,
+                hashedPassword,
+                booleanToInt(employee.is_admin),
+            ]
         );
 
         res.send(employee).status(200);

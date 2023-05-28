@@ -1,17 +1,9 @@
 import { Request, Response } from "express";
 import { faker } from "@faker-js/faker";
 import crypto from "crypto";
-import joi from "joi";
-
 import { sqlExe } from "../config/database";
 import { Product } from "../model/types";
-
-const joiProduct = joi.object({
-    product_id: joi.string().max(255).optional(),
-    name: joi.string().max(70).min(3).required(),
-    price: joi.number().required(),
-    img_src: joi.string().max(70).required(),
-});
+import { joiProduct } from "../model/validation";
 
 function generateProduct(): Product {
     return {

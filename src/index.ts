@@ -11,7 +11,7 @@ import mainRouter from "./routes/main";
 import routerProduct from "./routes/product";
 import routerEmployee from "./routes/employee";
 
-const config: any = dotenv.config().parsed;
+dotenv.config();
 const app: Application = express();
 
 // third party middleware
@@ -37,9 +37,9 @@ app.use(errorHandler);
 app.use(notFoundHandler);
 
 //server start
-app.listen(config.PORT, () => {
-	console.log(`Example app listening on port ${config.PORT}`);
-	console.log(config);
+app.listen(process.env.PORT, () => {
+	console.log(`Example app listening on port ${process.env.PORT}`);
+	console.log(dotenv.config().parsed);
 });
 
 

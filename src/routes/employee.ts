@@ -4,7 +4,9 @@ import { asyncHandle } from "../middleware/errorHandler";
 
 const routerEmployee = express.Router();
 
-routerEmployee.post("/generate", asyncHandle(employee.genereteEmployee));
+routerEmployee.post("/login", asyncHandle(employee.loginEmployee));
+routerEmployee.post("/generate", asyncHandle(employee.authenticateEmployee), asyncHandle(employee.genereteEmployee));
+routerEmployee.post("/auth", asyncHandle(employee.authenticateEmployee), asyncHandle(employee.getAllEmployee));
 routerEmployee.delete("/name/:name", asyncHandle(employee.deleteEmployeeByName));
 
 routerEmployee
