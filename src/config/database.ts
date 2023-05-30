@@ -2,11 +2,11 @@ import mysql from "mysql";
 
 const pool = mysql.createPool({
 	connectionLimit: 10,
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: "inventory",
-})
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB_NAME,
+});
 
 //function that will use to execute sql querry
 //Sample:
@@ -20,18 +20,20 @@ export const sqlExe = (query: string, values?: any) =>
 			if (errConnection) reject(errConnection);
 
 			//executing queries
-			await connection.query({ sql: query, values }, async function (errQuery, result, fields) {
-				if (errQuery) {
-					console.log(errQuery);
-					reject(errQuery);
+			await connection.query(
+				{ sql: query, values },
+				async function (errQuery, result, fields) {
+					if (errQuery) {
+						console.log(errQuery);
+						reject(errQuery);
+					}
+					resolve(result);
 				}
-				resolve(result);
-			});
+			);
 
 			//closing a connection
 			connection.release();
 		});
-
 	});
 
 function sleep(second: number) {
