@@ -15,5 +15,5 @@ echo -e "PORT=\nDB_HOST=\nDB_USER=\nDB_PASSWORD=\nDB_NAME=" > .env
 run locally
 
 ```bash
-npm run dev
+pnpm run dev
 ```
