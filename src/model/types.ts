@@ -6,11 +6,19 @@ export interface Product {
 }
 
 export interface Stock {
-	item_id: string;
+	stock_id: string;
 	product_id: string;
 	quantity: number;
-	mfd: string;
-	expiration: string;
+	production_date: Date;
+	expiration_date: Date;
+}
+
+export interface Sale {
+	sale_id: string;
+	product_id: string;
+	total_price: number;
+	quantity: number;
+	date: Date;
 }
 
 export interface Employee {
@@ -21,17 +29,4 @@ export interface Employee {
 	is_admin: boolean;
 }
 
-export interface history {
-	history_id: string;
-	employee_id: string;
-	product_id: string;
-	description: string;
-	date: Date;
-	action: Action;
-}
 
-enum Action {
-	"CREATE",
-	"UPATE",
-	"DELETE",
-}
