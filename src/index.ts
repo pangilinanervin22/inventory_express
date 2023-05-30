@@ -1,8 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import dotenv from "dotenv";
 import rateLimit from 'express-rate-limit'
 
 // import main from './routes/main'
@@ -11,7 +13,6 @@ import mainRouter from "./routes/main";
 import routerProduct from "./routes/product";
 import routerEmployee from "./routes/employee";
 
-dotenv.config();
 const app: Application = express();
 
 // third party middleware
