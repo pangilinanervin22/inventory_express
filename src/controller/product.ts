@@ -14,14 +14,13 @@ function generateProduct(): Product {
     };
 }
 
-async function checkReturnProduct(product_id: string) {
+export async function checkReturnProduct(product_id: string) {
     const data = await sqlExe(
         "SELECT * FROM `product` WHERE product_id = ?",
         product_id
     );
 
     if (data.length == 0) throw new Error("Invalid request: product not exist");
-
     return data;
 }
 

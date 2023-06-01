@@ -28,6 +28,7 @@ async function findEmployeeById(employee_id: string) {
     );
 
     if (data.length == 0) throw new Error("Invalid request: employee not exist");
+
     return data[0];
 }
 
@@ -35,10 +36,8 @@ async function findEmployeeByUserName(input: string) {
     const employeeDatabase = await sqlExe(
         "SELECT * FROM `employee` WHERE username = ?", input);
 
-    console.log(employeeDatabase, input);
-
     if (employeeDatabase.length == 0)
-        throw new Error("Invalid request: employee not exist");
+        return false;
 
     return employeeDatabase[0];
 }
@@ -54,7 +53,7 @@ export default {
     async getEmployeeById(req: Request, res: Response) {
         const data = await findEmployeeById(req.params.id);
 
-        res.send(data[0]).status(200);
+        res.send(data).status(200);
     },
 
     async deleteEmployeeById(req: Request, res: Response) {
@@ -74,9 +73,10 @@ export default {
             is_admin: req.body.is_admin || false,
         };
 
+
         const userNameExist = await findEmployeeByUserName(employee.username);
-        if (userNameExist)
-            throw new Error("Invalid request: Username is already use");
+        if (userNameExist) throw new Error("Username is already use")
+
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(employee.password, salt);
@@ -134,6 +134,8 @@ export default {
         const loginData = { ...req.body };
 
         const employee = await findEmployeeByUserName(loginData.username);
+        if (!employee) throw new Error("Username not exist");
+
         const passwordMatch = await bcrypt.compare(
             loginData.password,
             employee.password
