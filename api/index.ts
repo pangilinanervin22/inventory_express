@@ -7,7 +7,7 @@ import morgan from "morgan";
 
 // import main from './routes/main'
 import { errorHandler, notFoundHandler } from "../src/middleware/errorHandler";
-import main from "../src/routes/main";
+import main from "../src/routes/main.routes";
 import { randomInt } from "crypto";
 
 const app: Application = express();
