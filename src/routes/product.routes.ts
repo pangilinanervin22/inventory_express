@@ -10,7 +10,7 @@ routerProduct.delete("/name/:name", asyncHandle(product.deleteProductByName));
 routerProduct
     .route("/")
     .get(asyncHandle(product.getAllProduct))
-    .post(asyncHandle(product.addProduct))
+    .post(asyncHandle(product.createProduct))
     .put(asyncHandle(product.updateProduct));
 
 routerProduct

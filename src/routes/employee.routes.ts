@@ -12,7 +12,7 @@ routerEmployee.delete("/name/:name", asyncHandle(employee.deleteEmployeeByName))
 routerEmployee
     .route("/")
     .get(asyncHandle(employee.getAllEmployee))
-    .post(asyncHandle(employee.addEmployee))
+    .post(asyncHandle(employee.createEmployee))
     .put(asyncHandle(employee.updateEmployee));
 
 routerEmployee

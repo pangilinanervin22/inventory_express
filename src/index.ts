@@ -12,6 +12,7 @@ import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import mainRouter from "./routes/main.routes";
 import routerProduct from "./routes/product.routes";
 import routerEmployee from "./routes/employee.routes";
+import routerStock from "./routes/stock.routes";
 
 const app: Application = express();
 
@@ -30,8 +31,10 @@ app.use(rateLimit({
 
 //routes
 app.use("/api", mainRouter);
-app.use("/api/product", routerProduct);
 app.use("/api/employee", routerEmployee);
+app.use("/api/product", routerProduct);
+app.use("/api/stock", routerStock);
+
 
 //error handlers
 app.use(errorHandler);

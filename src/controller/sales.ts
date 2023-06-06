@@ -39,7 +39,8 @@ export default {
 
     async getStockByStockId(req: Request, res: Response) {
         const data = await sqlExe(
-            "SELECT * FROM stock WHERE stock_id = ??", req.params.id
+            "SELECT * FROM stock WHERE stock_id = ??",
+            req.params.id
         );
 
         res.send(data[0]).status(200);

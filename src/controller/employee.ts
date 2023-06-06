@@ -13,7 +13,9 @@ function generateEmployee(): Employee {
         name: faker.person.fullName(),
         password: "bcrypt2412",
         username: faker.internet.email({ provider: "" }),
+        contact_no: faker.phone.number(),
         is_admin: false,
+        img_src: faker.image.avatarGitHub()
     };
 }
 
@@ -45,7 +47,7 @@ async function findEmployeeByUserName(input: string) {
 // exported controllers
 export default {
     async getAllEmployee(req: Request, res: Response) {
-        const data = await sqlExe("SELECT * FROM ??", "employee");
+        const data = await sqlExe("SELECT `employee_id`, `name`, `username`, `contact_no`, `is_admin` `img_src` FROM ??", "employee");
 
         res.send(data);
     },
@@ -63,14 +65,18 @@ export default {
         res.send("Successfully deleted").status(200);
     },
 
-    async addEmployee(req: Request, res: Response) {
+    async createEmployee(req: Request, res: Response) {
         const { error } = joiEmployee.validate(req.body);
         if (error?.message) throw new Error(error?.message);
+
+        console.log(req.body.img_src || 2);
+
 
         const employee: Employee = {
             ...req.body,
             employee_id: crypto.randomUUID(),
             is_admin: req.body.is_admin || false,
+            img_src: req.body.img_src || faker.image.avatarGitHub()
         };
 
 
@@ -82,13 +88,15 @@ export default {
         const hashedPassword = await bcrypt.hash(employee.password, salt);
 
         await sqlExe(
-            "INSERT INTO `employee`(`employee_id`, `name`, `username`, `password`, `is_admin`) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO `employee`(`employee_id`, `name`, `username`, `contact_no`, `password`, `is_admin`, `img_src`) VALUES (?, ?, ?, ?, ?, ?, ?)",
             [
                 employee.employee_id,
                 employee.name,
                 employee.username,
+                employee.contact_no,
                 hashedPassword,
                 booleanToInt(employee.is_admin),
+                employee.img_src
             ]
         );
 
@@ -101,13 +109,13 @@ export default {
     },
 
     async updateEmployee(req: Request, res: Response) {
-        const RequestId = req.body.employee_id || req.params.id;
-        if (!RequestId) throw new Error("Invalid Request: no id request");
+        const requestId = req.body.employee_id || req.params.id;
+        if (!requestId) throw new Error("Invalid Request: no id request");
 
-        const employeeDatabase = await findEmployeeById(RequestId);
+        const employeeDatabase = await findEmployeeById(requestId);
         const employee: Employee = {
             ...req.body,
-            password: req.body.password || employeeDatabase.password,
+            password: employeeDatabase.password,  // must update password with bcrypt
             is_admin: req.body.is_admin || false,
         };
 
@@ -117,13 +125,15 @@ export default {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(employee.password, salt);
         await sqlExe(
-            "UPDATE `employee` SET `name`= ?,`username`= ?,`password`= ?, `is_Admin` = ? WHERE `employee_id` = ?",
+            "UPDATE `employee` SET `name`= ?,`username`= ?, `contact_no`= ?, `password`= ?, `is_Admin` = ? `img_src` = ? WHERE `employee_id` = ?",
             [
                 employee.name,
                 employee.username,
+                employee.contact_no,
                 hashedPassword,
                 booleanToInt(employee.is_admin),
-                RequestId,
+                employee.img_src,
+                requestId,
             ]
         );
 
@@ -144,7 +154,7 @@ export default {
         if (passwordMatch === false) throw new Error("Password don't match");
         const tokenCreate = jwt.sign({ employee_id: employee.employee_id, is_admin: employee.is_admin },
             process.env.JWT_SECRET_KEY || "",
-            { expiresIn: "7d", }
+            { expiresIn: "3d", }
         );
 
         res.send(tokenCreate).status(200);
@@ -164,6 +174,8 @@ export default {
     // ALL controller below will be availbe only in development
     async genereteEmployee(req: Request, res: Response) {
         const generated = await generateEmployee();
+        console.log(generated);
+
         const { error } = joiEmployee.validate(generated);
         if (error?.message) throw new Error(error?.message);
 
@@ -177,13 +189,15 @@ export default {
         const hashedPassword = await bcrypt.hash(employee.password, salt);
 
         await sqlExe(
-            "INSERT INTO `employee`(`employee_id`, `name`, `username`, `password`, `is_admin`) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO `employee`(`employee_id`, `name`, `username`, `contact_no`, `password`, `is_admin`, `img_src`) VALUES (?, ?, ?, ?, ?, ?, ?)",
             [
                 employee.employee_id,
                 employee.name,
                 employee.username,
+                employee.contact_no,
                 hashedPassword,
                 booleanToInt(employee.is_admin),
+                employee.img_src
             ]
         );
 
