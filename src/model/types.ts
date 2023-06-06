@@ -3,6 +3,7 @@ export interface Product {
 	name: string;
 	price: number;
 	img_src: string;
+	brand: string;
 }
 
 export interface Stock {
@@ -14,7 +15,7 @@ export interface Stock {
 }
 
 export interface Sale {
-	sale_id: string;
+	sales_id: string;
 	product_id: string;
 	total_price: number;
 	quantity: number;
@@ -26,7 +27,6 @@ export interface Employee {
 	name: string;
 	username: string;
 	password: string;
+	contact_no: string;
 	is_admin: boolean;
 }
-
-
