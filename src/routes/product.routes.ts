@@ -4,7 +4,7 @@ import { asyncHandle } from "../middleware/errorHandler";
 
 const routerProduct = express.Router();
 
-routerProduct.get("/gen", asyncHandle(product.generateProduct));
+routerProduct.post("/generate", asyncHandle(product.generateProduct));
 routerProduct.delete("/name/:name", asyncHandle(product.deleteProductByName));
 
 routerProduct

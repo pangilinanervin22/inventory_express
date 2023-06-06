@@ -9,9 +9,9 @@ import rateLimit from 'express-rate-limit'
 
 // import main from './routes/main'
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
-import mainRouter from "./routes/main";
-import routerProduct from "./routes/product";
-import routerEmployee from "./routes/employee";
+import mainRouter from "./routes/main.routes";
+import routerProduct from "./routes/product.routes";
+import routerEmployee from "./routes/employee.routes";
 
 const app: Application = express();
 
