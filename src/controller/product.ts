@@ -78,10 +78,10 @@ export default {
     },
 
     async updateProduct(req: Request, res: Response) {
-        const product: Product = { ...req.body };
+        const data = await returnProductById(req.params.id || req.body.product_id);
+        const product: Product = { ...req.body, ...data };
 
-        const data = await returnProductById(req.params.id || product.product_id);
-        const { error } = joiProduct.validate(req.body);
+        const { error } = joiProduct.validate(product);
         if (error?.message) throw new Error(error?.message);
 
         await sqlExe(
@@ -94,7 +94,7 @@ export default {
             ]
         );
 
-        res.send([data[0], product]).status(200);
+        res.send([data, product]).status(200);
     },
 
     // ALL controller below will be availbe only in development

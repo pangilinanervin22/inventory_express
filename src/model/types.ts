@@ -2,7 +2,6 @@ export interface Product {
 	product_id: string;
 	name: string;
 	price: number;
-	img_src: string;
 	brand: string;
 }
 
@@ -18,7 +17,6 @@ export interface Sale {
 	sales_id: string;
 	product_id: string;
 	total_price: number;
-	quantity: number;
 	date: Date;
 }
 
