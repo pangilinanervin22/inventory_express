@@ -33,3 +33,11 @@ export const joiStock = Joi.object({
     production_date: Joi.date().format("YYYY-MM-DD").required(),
     expiration_date: Joi.date().format("YYYY-MM-DD").required(),
 });
+
+
+export const joiSales = Joi.object({
+    sales_id: Joi.string().max(255).optional(),
+    product_id: Joi.string().max(255).required(),
+    total_price: Joi.number().min(0).max(1000).required(),
+    date: Joi.date().format("YYYY-MM-DD").required(),
+});

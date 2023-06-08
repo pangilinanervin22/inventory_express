@@ -13,7 +13,7 @@ export interface Stock {
 	expiration_date: Date;
 }
 
-export interface Sale {
+export interface Sales {
 	sales_id: string;
 	product_id: string;
 	total_price: number;

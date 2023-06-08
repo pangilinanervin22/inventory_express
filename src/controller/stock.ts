@@ -18,28 +18,57 @@ function generateStock(product_id: string): Stock {
 
 async function returnStockById(stock_id: string) {
     const data = await sqlExe(
-        "SELECT * FROM `product` WHERE stock_id = ?",
+        "SELECT * FROM `stock` WHERE stock_id = ?",
         stock_id
     );
 
-    if (data.length == 0) throw new Error("Invalid request: product not exist");
-    return data;
+    if (data.length == 0) throw new Error("Invalid request: stock not exist");
+    return data[0];
+}
+
+async function returnStockByProductId(product_id: string) {
+    const data = await sqlExe(
+        `SELECT SUM(S.quantity), P.name FROM stock AS S CROSS JOIN 
+        product AS P WHERE S.product_id = ?;`,
+        product_id
+    );
+
+    if (data.length == 0) throw new Error("Invalid request: stock not exist");
+    return data[0];
 }
 
 // exported controllers
 export default {
     async getAllStock(req: Request, res: Response) {
         const data =
-            await sqlExe(`SELECT stock_id, product.name,quantity,production_date,expiration_date 
-        FROM stock CROSS JOIN product WHERE stock.product_id = product.product_id;
+            await sqlExe(`SELECT S.stock_id, P.product_id, P.name, S.quantity, S.production_date, S.expiration_date 
+        FROM stock AS S CROSS JOIN product AS P WHERE S.product_id = P.product_id;
         `);
 
         res.send(data);
     },
 
-    async getStockByStockId(req: Request, res: Response) {
+    async getTotalStock(req: Request, res: Response) {
+        const data = await sqlExe(`SELECT SUM(S.quantity), P.name FROM stock AS S CROSS
+        JOIN product AS P WHERE S.product_id = P.product_id GROUP BY P.product_id;
+        `);
+
+        // total stock
+        // const data = await sqlExe(`SELECT SUM(S.quantity) FROM stock AS S;`);
+
+        // by month
+        // const data =
+        //     await sqlExe(`SELECT DATE_FORMAT(s.production_date, '%Y-%m') AS month_year, SUM(S.quantity) FROM stock AS S
+        //      GROUP BY DATE_FORMAT(s.production_date, '%Y-%m') ORDER BY DATE_FORMAT(s.production_date, '%Y-%m');`);
+        res.send(data);
+    },
+
+    async getStockById(req: Request, res: Response) {
+        await returnStockById(req.params.id);
         const data = await sqlExe(
-            "SELECT * FROM stock WHERE stock_id = ??", req.params.id
+            `SELECT S.stock_id, P.product_id, P.name, S.quantity, S.production_date, S.expiration_date 
+        FROM stock AS S CROSS JOIN product AS P WHERE S.stock_id = ? and S.product_id = P.product_id;`,
+            req.params.id
         );
 
         res.send(data[0]).status(200);
@@ -78,42 +107,45 @@ export default {
     },
 
     async updateStock(req: Request, res: Response) {
-        const stock: Stock = { ...req.body };
+        const data = await returnStockById(req.params.id || req.body.stock_id);
+        const stock: Stock = { ...data, ...req.body };
 
-        const data = await returnStockById(req.params.id || stock.product_id);
-        const { error } = joiStock.validate(req.body);
+        console.log(stock);
+
+        const { error } = joiStock.validate(stock);
         if (error?.message) throw new Error(error?.message);
 
-        await sqlExe(
-            "UPDATE `stock` SET `name`= ?,`price`= ?,`img_src`= ? WHERE `product_id` = ?",
+        const fetch = await sqlExe(
+            "UPDATE `stock` SET `product_id` = ?, `quantity` = ?, `production_date` = ?, `expiration_date` = ? WHERE stock_id = ?;",
+            [
+                stock.product_id,
+                stock.quantity,
+                stock.production_date,
+                stock.expiration_date,
+                req.params.id,
+                stock.stock_id,
+            ]
+        );
+
+        console.log(fetch);
+        res.send([data, stock]).status(200);
+    },
+
+    // ALL controller below will be availbe only in development
+    async generateStock(req: Request, res: Response) {
+        const product = await returnProductByName(req.body.name);
+        const stock = generateStock(product.product_id);
+        const fetch = await sqlExe(
+            "INSERT INTO `stock`(`stock_id`, `product_id`, `quantity`, `production_date`, `expiration_date`) VALUES (?,?,?,?,?);",
             [
                 stock.stock_id,
-                stock.stock_id,
+                product.product_id,
                 stock.quantity,
                 stock.production_date,
                 stock.expiration_date,
             ]
         );
 
-        res.send([data, stock]).status(200);
-    },
-
-    // ALL controller below will be availbe only in development
-    async generateStock(req: Request, res: Response) {
-        const product = await returnProductByName(req.params.name);
-        const stock = generateStock(product.product_id);
-        const fetch = await sqlExe(
-            "INSERT INTO `product` (`product_id`, `name`, `price`, `img_src`) VALUES (?, ?, ?, ?)",
-            Object.values(stock)
-        );
-
-        console.log(stock, fetch);
-        res.send([stock, fetch]).status(200);
-    },
-
-    async deleteProductByName(req: Request, res: Response) {
-        console.log(req.params.name);
-        await sqlExe("DELETE FROM `product` WHERE name = ?", req.params.name);
-        res.send("Successfully deleted").status(200);
+        res.send([{ ...stock, name: product.name }]).status(200);
     },
 };

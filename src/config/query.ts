@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS Product(
     brand VARCHAR(70) NOT NULL,
     PRIMARY KEY(product_id));
 
-CREATE TABLE IF NOT EXISTS Sale(
+CREATE TABLE IF NOT EXISTS Sales(
     sales_id VARCHAR(255) NOT NULL,
     product_id VARCHAR(255) NOT NULL, 
     total_price FLOAT NOT NULL, 
@@ -41,6 +41,6 @@ CREATE TABLE IF NOT EXISTS Employee (
     ON DELETE CASCADE ON UPDATE RESTRICT; 
    
    
-    ALTER TABLE sale ADD CONSTRAINT product_sale FOREIGN KEY 
+    ALTER TABLE sales ADD CONSTRAINT product_sales FOREIGN KEY 
     (product_id) REFERENCES product(product_id) 
     ON DELETE CASCADE ON UPDATE RESTRICT;`;
