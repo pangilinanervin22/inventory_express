@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS Product(
     product_id VARCHAR(255),
     name VARCHAR(70) NOT NULL,
     price FLOAT NOT NULL,
-    img_src VARCHAR(255),
     brand VARCHAR(70) NOT NULL,
     PRIMARY KEY(product_id));
 
@@ -15,7 +14,6 @@ CREATE TABLE IF NOT EXISTS Sale(
     sales_id VARCHAR(255) NOT NULL,
     product_id VARCHAR(255) NOT NULL, 
     total_price FLOAT NOT NULL, 
-    quantity INT NOT NULL, 
     sales_date DATE DEFAULT(CURRENT_DATE), 
     PRIMARY KEY (sales_id),
     FOREIGN KEY(product_id) REFERENCES Product(product_id));
@@ -39,9 +37,10 @@ CREATE TABLE IF NOT EXISTS Employee (
     PRIMARY KEY(employee_id));
     
     ALTER TABLE stock ADD CONSTRAINT product_stock 
-    FOREIGN KEY (product_id) REFERENCES product(product_id) 
+    FOREIGN KEY (product_id) REFERENCES employee(employee_id) 
     ON DELETE CASCADE ON UPDATE RESTRICT; 
    
-    ALTER TABLE sale ADD CONSTRAINT product_sale 
-    FOREIGN KEY (product_id) REFERENCES product(product_id) 
+   
+    ALTER TABLE sale ADD CONSTRAINT product_sale FOREIGN KEY 
+    (product_id) REFERENCES product(product_id) 
     ON DELETE CASCADE ON UPDATE RESTRICT;`;

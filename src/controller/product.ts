@@ -11,7 +11,6 @@ function generateProduct(): Product {
         name: faker.commerce.product(),
         price: Number(faker.commerce.price({ max: 1000 })),
         brand: faker.commerce.productName(),
-        img_src: faker.image.urlLoremFlickr({ category: "chocolate" }),
     };
 }
 
@@ -63,18 +62,15 @@ export default {
         const product: Product = {
             ...req.body,
             product_id: crypto.randomUUID(),
-            img_src:
-                req.body.img_src || "https://cdn.onlinewebfonts.com/svg/img_137275.png",
         };
 
         await sqlExe(
-            "INSERT INTO `product` (`product_id`, `name`, `price`, `brand`, `img_src`) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO `product` (`product_id`, `name`, `price`, `brand`) VALUES (?, ?, ?, ?, ?)",
             [
                 product.product_id,
                 product.name,
                 product.price,
                 product.brand,
-                product.img_src,
             ]
         );
 
@@ -89,11 +85,10 @@ export default {
         if (error?.message) throw new Error(error?.message);
 
         await sqlExe(
-            "UPDATE `product` SET `name`= ?,`price`= ?, `brand`= ?,`img_src`= ? WHERE `product_id` = ?",
+            "UPDATE `product` SET `name`= ?,`price`= ?, `brand`= ? WHERE `product_id` = ?",
             [
                 product.name,
                 product.price,
-                product.img_src,
                 product.brand,
                 product.product_id,
             ]
@@ -106,13 +101,12 @@ export default {
     async generateProduct(req: Request, res: Response) {
         const product = await generateProduct();
         const fetch = await sqlExe(
-            "INSERT INTO `product` (`product_id`, `name`, `price`, `brand`, `img_src`) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO `product` (`product_id`, `name`, `price`, `brand`) VALUES (?, ?, ?, ?, ?)",
             [
                 product.product_id,
                 product.name,
                 product.price,
                 product.brand,
-                product.img_src,
             ]
         );
         console.log(product, fetch);

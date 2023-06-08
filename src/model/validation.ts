@@ -1,4 +1,12 @@
-import Joi from "joi";
+import JoiMain, { Root } from "joi";
+import JoiDate from '@joi/date';
+
+type JoiWithDate = Root & {
+    date: () => JoiMain.DateSchema;
+};
+
+const Joi: JoiWithDate = JoiMain.extend(JoiDate);
+
 
 export const joiEmployee = Joi.object({
     name: Joi.string().max(70).min(2).required(),
@@ -15,14 +23,13 @@ export const joiProduct = Joi.object({
     name: Joi.string().max(70).min(3).required(),
     brand: Joi.string().max(70).min(3).required(),
     price: Joi.number().required(),
-    img_src: Joi.string().max(255).required(),
 });
 
 
 export const joiStock = Joi.object({
     stock_id: Joi.string().max(255).optional(),
     product_id: Joi.string().max(255).required(),
-    quantity: Joi.number().min(3).max(1000).required(),
-    production_date: Joi.date().required(),
-    expiration_date: Joi.date().required(),
+    quantity: Joi.number().min(0).max(1000).required(),
+    production_date: Joi.date().format("YYYY-MM-DD").required(),
+    expiration_date: Joi.date().format("YYYY-MM-DD").required(),
 });
