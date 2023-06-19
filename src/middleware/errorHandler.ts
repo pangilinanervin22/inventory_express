@@ -17,8 +17,9 @@ export const errorHandler = (
 	next: NextFunction
 ) => {
 	const status = err.status || 400;
+	const message = getErrorMessage(err.message)
 
-	res.status(status).send(err.message);
+	res.status(status).send(message);
 };
 
 export const notFoundHandler = (
@@ -28,3 +29,18 @@ export const notFoundHandler = (
 ) => {
 	res.status(404).send("Route not found");
 };
+
+
+function getErrorMessage(message: string) {
+	switch (message) {
+		case "jwt malformed":
+			return "Inalid token"
+			break;
+
+		default:
+			return message
+			break;
+	}
+
+	return
+}

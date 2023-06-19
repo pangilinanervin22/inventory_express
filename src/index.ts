@@ -7,20 +7,21 @@ import helmet from "helmet";
 import morgan from "morgan";
 import rateLimit from 'express-rate-limit'
 
-// import main from './routes/main'
+// importing middlewares and routers
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import mainRouter from "./routes/main.routes";
 import routerProduct from "./routes/product.routes";
 import routerEmployee from "./routes/employee.routes";
 import routerStock from "./routes/stock.routes";
+import routerSales from "./routes/sales.routes";
 
 const app: Application = express();
 
-// third party middleware
+//using third party middleware
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(helmet());
 app.use(morgan("dev"));
 app.use(rateLimit({
 	windowMs: 2 * 60 * 1000, // 2 minutes
@@ -34,6 +35,8 @@ app.use("/api", mainRouter);
 app.use("/api/employee", routerEmployee);
 app.use("/api/product", routerProduct);
 app.use("/api/stock", routerStock);
+app.use("/api/stock", routerStock);
+app.use("/api/sales", routerSales);
 
 
 //error handlers
