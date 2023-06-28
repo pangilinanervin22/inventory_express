@@ -26,6 +26,6 @@ export interface Employee {
 	username: string;
 	password: string;
 	contact_no: string;
-	is_admin: boolean;
+	position: string;
 	img_src: string;
 }

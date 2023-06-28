@@ -14,7 +14,7 @@ const pool = mysql.createPool({
 //sqlExe("Select * From ?", "product");
 //sqlExe("Select * From ?", ["product"]);
 export const sqlExe = (query: string, values?: any) =>
-	new Promise<any[]>((resolve, reject) => {
+	new Promise<any>((resolve, reject) => {
 		//get a connection in the pool
 		pool.getConnection(async function (errConnection, connection) {
 			if (errConnection) reject(errConnection);
@@ -23,10 +23,8 @@ export const sqlExe = (query: string, values?: any) =>
 			await connection.query(
 				{ sql: query, values },
 				async function (errQuery, result, fields) {
-					if (errQuery) {
-						console.log(errQuery);
-						reject(errQuery);
-					}
+					if (errQuery) reject(errQuery);
+
 					resolve(result);
 				}
 			);
@@ -35,9 +33,3 @@ export const sqlExe = (query: string, values?: any) =>
 			connection.release();
 		});
 	});
-
-function sleep(second: number) {
-	return new Promise((resolve) => {
-		setTimeout(resolve, second);
-	});
-}
