@@ -19,6 +19,8 @@ routerStock
 routerStock
     .route("/")
     .get(asyncHandle(stock.getAllStock))
-    .post(asyncHandle(stock.createStock));
+    .post(asyncHandle(stock.postStock))
+    .put(asyncHandle(stock.updateStock));
+
 
 export default routerStock;

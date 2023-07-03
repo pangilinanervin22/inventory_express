@@ -16,8 +16,14 @@ export const errorHandler = (
 	res: Response,
 	next: NextFunction
 ) => {
+	if (err.fatal) {
+		err.message = "Database is currently offline";
+		err.status = 501
+	}
+
 	const status = err.status || 400;
-	const message = getErrorMessage(err.message)
+	const message = getErrorMessage(err.message) || err;
+	console.log(err, "final");
 
 	res.status(status).send(message);
 };
@@ -34,13 +40,8 @@ export const notFoundHandler = (
 function getErrorMessage(message: string) {
 	switch (message) {
 		case "jwt malformed":
-			return "Inalid token"
-			break;
-
+			return "Invalid token";
 		default:
-			return message
-			break;
+			return message;
 	}
-
-	return
 }

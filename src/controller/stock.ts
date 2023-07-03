@@ -17,10 +17,7 @@ function generateStock(product_id: string): Stock {
 }
 
 async function returnStockById(stock_id: string) {
-    const data = await sqlExe(
-        "SELECT * FROM `stock` WHERE stock_id = ?",
-        stock_id
-    );
+    const data = await sqlExe("SELECT * FROM `stock` WHERE stock_id = ?", stock_id);
 
     if (data.length == 0) throw new Error("Invalid request: stock not exist");
     return data[0];
@@ -42,16 +39,14 @@ export default {
     async getAllStock(req: Request, res: Response) {
         const data =
             await sqlExe(`SELECT S.stock_id, P.product_id, P.name, S.quantity, S.production_date, S.expiration_date 
-        FROM stock AS S CROSS JOIN product AS P WHERE S.product_id = P.product_id;
-        `);
+        FROM stock AS S CROSS JOIN product AS P WHERE S.product_id = P.product_id;`);
 
         res.send(data);
     },
 
     async getTotalStock(req: Request, res: Response) {
         const data = await sqlExe(`SELECT SUM(S.quantity), P.name FROM stock AS S CROSS
-        JOIN product AS P WHERE S.product_id = P.product_id GROUP BY P.product_id;
-        `);
+        JOIN product AS P WHERE S.product_id = P.product_id GROUP BY P.product_id;`);
 
         // total stock
         // const data = await sqlExe(`SELECT SUM(S.quantity) FROM stock AS S;`);
@@ -77,20 +72,22 @@ export default {
     async deleteStockById(req: Request, res: Response) {
         await returnStockById(req.params.id);
 
-        await sqlExe("DELETE FROM stock WHERE stock_id = ??", req.params.id);
+        await sqlExe("DELETE FROM stock WHERE stock_id = ?", req.params.id);
         res.send("Successfully deleted").status(200);
     },
 
-    async createStock(req: Request, res: Response) {
-        const { error } = joiStock.validate(req.body);
-        if (error?.message) throw new Error(error?.message);
+    async postStock(req: Request, res: Response) {
+        console.log(req.body);
 
-        const product = await returnProductByName(req.body.product_id);
+        const product = await returnProductById(req.body.product_id);
         const stock: Stock = {
             ...req.body,
             stock_id: crypto.randomUUID(),
             product_id: product.name,
         };
+
+        const { error } = joiStock.validate(req.body);
+        if (error?.message) throw new Error(error?.message);
 
         await sqlExe(
             "INSERT INTO `stock`(`stock_id`, `product_id`, `quantity`, `production_date`, `expiration_date`) VALUES (?,?,?,?,?);",
@@ -110,8 +107,6 @@ export default {
         const data = await returnStockById(req.params.id || req.body.stock_id);
         const stock: Stock = { ...data, ...req.body };
 
-        console.log(stock);
-
         const { error } = joiStock.validate(stock);
         if (error?.message) throw new Error(error?.message);
 
@@ -122,7 +117,6 @@ export default {
                 stock.quantity,
                 stock.production_date,
                 stock.expiration_date,
-                req.params.id,
                 stock.stock_id,
             ]
         );

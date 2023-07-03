@@ -3,25 +3,25 @@ import { faker } from "@faker-js/faker";
 import crypto from "crypto";
 import { sqlExe } from "../config/database";
 import { Sales } from "../model/types";
-import { joiStock } from "../model/validation";
+import { joiSales } from "../model/validation";
 import { returnProductById, returnProductByName } from "./product";
 
-function generateStock(product_id: string): Sales {
+function generateSales(product_id: string): Sales {
     return {
         sales_id: faker.string.uuid(),
         product_id: product_id,
-        date: faker.date.anytime(),
+        sales_date: faker.date.anytime(),
         total_price: Number(faker.number.int({ min: 50, max: 100000 })),
     };
 }
 
 async function returnSaleById(sales_id: string) {
     const data = await sqlExe(
-        "SELECT * FROM `sale` WHERE sales_id = ?",
+        "SELECT * FROM `sales` WHERE sales_id = ?",
         sales_id
     );
 
-    if (data.length == 0) throw new Error("Invalid request: product not exist");
+    if (data.length == 0) throw new Error("Invalid request: sales not exist");
     return data;
 }
 
@@ -29,8 +29,8 @@ async function returnSaleById(sales_id: string) {
 export default {
     async getAllSales(req: Request, res: Response) {
         const data =
-            await sqlExe(`SELECT sales_id, product.name,quantity,production_date,expiration_date 
-        FROM sale CROSS JOIN product WHERE sale.product_id = product.product_id;
+            await sqlExe(`SELECT sales_id, product.name,sales.product_id,total_price ,sales_date  
+        FROM sales CROSS JOIN product WHERE sales.product_id = product.product_id;
         `);
 
         res.send(data);
@@ -38,7 +38,7 @@ export default {
 
     async getSalesById(req: Request, res: Response) {
         const data = await sqlExe(
-            "SELECT * FROM sale WHERE sales_id = ??",
+            "SELECT * FROM sales WHERE sales_id = ??",
             req.params.id
         );
 
@@ -48,28 +48,26 @@ export default {
     async deleteSalesById(req: Request, res: Response) {
         await returnSaleById(req.params.id);
 
-        await sqlExe("DELETE FROM sale WHERE sales_id = ??", req.params.id);
+        await sqlExe("DELETE FROM sales WHERE sales_id = ?", req.params.id);
         res.send("Successfully deleted").status(200);
     },
 
     async createSales(req: Request, res: Response) {
-        const { error } = joiStock.validate(req.body);
-        if (error?.message) throw new Error(error?.message);
-
-        const product = await returnProductById(req.body.product_id);
         const sales: Sales = {
             ...req.body,
             sales_id: crypto.randomUUID(),
-            product_id: product.name,
         };
 
+        const { error } = joiSales.validate(sales);
+        if (error?.message) throw new Error(error?.message);
+
         await sqlExe(
-            "INSERT INTO `sale`(`sales_id`, `product_id`, `quantity`, `production_date`, `expiration_date`) VALUES (?,?,?,?,?);",
+            "INSERT INTO `sales`(`sales_id`, `product_id`, `total_price`, `sales_date`) VALUES (?,?,?,?);",
             [
                 sales.sales_id,
-                product.product_id,
-                sales.date,
+                sales.product_id,
                 sales.total_price,
+                sales.sales_date,
             ]
         );
 
@@ -79,16 +77,17 @@ export default {
     async updateSales(req: Request, res: Response) {
         const sales: Sales = { ...req.body };
 
-        const data = await returnSaleById(req.params.id || sales.product_id);
-        const { error } = joiStock.validate(req.body);
+
+        const data = await returnSaleById(req.params.id || sales.sales_id);
+        const { error } = joiSales.validate(req.body);
         if (error?.message) throw new Error(error?.message);
 
         await sqlExe(
-            "UPDATE `sale` SET `product_id` = ?, `total_price`= ?, `date`= ? WHERE `sales_id` = ?",
+            "UPDATE `sales` SET `product_id` = ?, `total_price`= ?, `sales_date`= ? WHERE `sales_id` = ?",
             [
                 sales.product_id,
                 sales.total_price,
-                sales.date,
+                sales.sales_date,
                 sales.sales_id,
             ]
         );
@@ -99,7 +98,7 @@ export default {
     // ALL controller below will be availbe only in development
     async generateSales(req: Request, res: Response) {
         const product = await returnProductByName(req.params.name);
-        const sale = generateStock(product.product_id);
+        const sale = generateSales(product.product_id);
         const fetch = await sqlExe(
             "INSERT INTO `product` (`product_id`, `name`, `price`, `img_src`) VALUES (?, ?, ?, ?)",
             Object.values(sale)

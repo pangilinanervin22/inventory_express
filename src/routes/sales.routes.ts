@@ -19,6 +19,10 @@ routerSales
 routerSales
     .route("/")
     .get(asyncHandle(sales.getAllSales))
+    .post(asyncHandle(sales.createSales))
+    .put(asyncHandle(sales.updateSales))
     .post(asyncHandle(sales.createSales));
+
+
 
 export default routerSales;

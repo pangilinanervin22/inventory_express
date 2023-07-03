@@ -16,7 +16,9 @@ routerProduct
 routerProduct
     .route("/:id")
     .get(asyncHandle(product.getProductById))
-    .put(asyncHandle(product.updateProduct))
-    .delete(asyncHandle(product.deleteProductById));
+    .post(asyncHandle(product.createProduct))
+    .delete(asyncHandle(product.deleteProductById))
+    .put(asyncHandle(product.updateProduct));
+
 
 export default routerProduct;

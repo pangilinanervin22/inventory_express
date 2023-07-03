@@ -88,7 +88,7 @@ const createEmployee = asyncHandle(async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(employee.password, salt);
 
     await sqlExe(
-        "INSERT INTO `employee`(`employee_id`, `name`, `username`, `contact_no`, `password`, `is_admin`, `img_src`) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO `employee`(`employee_id`, `name`, `username`, `contact_no`, `password`, `position`, `img_src`) VALUES (?, ?, ?, ?, ?, ?, ?)",
         [
             employee.employee_id,
             employee.name,
@@ -125,7 +125,7 @@ const updateEmployee = asyncHandle(async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(employee.password, salt);
     await sqlExe(
-        "UPDATE `employee` SET `name`= ?,`username`= ?, `contact_no`= ?, `password`= ?, `is_Admin` = ? `img_src` = ? WHERE `employee_id` = ?",
+        "UPDATE `employee` SET `name`= ?,`username`= ?, `contact_no`= ?, `password`= ?, `position` = ? `img_src` = ? WHERE `employee_id` = ?",
         [
             employee.name,
             employee.username,
@@ -207,7 +207,7 @@ export default {
         const hashedPassword = await bcrypt.hash(employee.password, salt);
 
         await sqlExe(
-            "INSERT INTO `employee`(`employee_id`, `name`, `username`, `contact_no`, `password`, `is_admin`, `img_src`) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO `employee`(`employee_id`, `name`, `username`, `contact_no`, `password`, `position`, `img_src`) VALUES (?, ?, ?, ?, ?, ?, ?)",
             [
                 employee.employee_id,
                 employee.name,
