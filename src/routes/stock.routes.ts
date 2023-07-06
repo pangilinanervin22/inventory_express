@@ -5,22 +5,21 @@ import { asyncHandle } from "../middleware/errorHandler";
 const routerStock = express.Router();
 
 
-routerStock.post("/generate", asyncHandle(stock.generateStock));
-routerStock.get("/total", asyncHandle(stock.getTotalStock));
-
+routerStock.post("/generate", stock.generateStock);
+routerStock.get("/total", stock.getTotalStock);
 
 routerStock
     .route("/:id")
-    .get(asyncHandle(stock.getStockById))
-    .delete(asyncHandle(stock.deleteStockById))
-    .put(asyncHandle(stock.updateStock));
+    .get(stock.getStockById)
+    .delete(stock.deleteStockById)
+    .put(stock.updateStock);
 
 
 routerStock
     .route("/")
-    .get(asyncHandle(stock.getAllStock))
-    .post(asyncHandle(stock.postStock))
-    .put(asyncHandle(stock.updateStock));
+    .get(stock.getAllStock)
+    .post(stock.createStock)
+    .put(stock.updateStock);
 
 
 export default routerStock;

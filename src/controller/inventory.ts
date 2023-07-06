@@ -75,8 +75,9 @@ const deleteStockById = asyncHandle(async (req: Request, res: Response) => {
     res.send("Successfully deleted").status(200);
 });
 
+const postStock = asyncHandle(async (req: Request, res: Response) => {
+    console.log(req.body);
 
-const createStock = asyncHandle(async (req: Request, res: Response) => {
     const product = await returnProductById(req.body.product_id);
     const stock: Stock = {
         ...req.body,
@@ -123,14 +124,16 @@ const updateStock = asyncHandle(async (req: Request, res: Response) => {
     res.send([data, stock]).status(200);
 });
 
+
 // exported controllers
 export default {
     getAllStock,
     getTotalStock,
     getStockById,
-    createStock,
-    updateStock,
     deleteStockById,
+    postStock,
+    updateStock,
+
     // ALL controller below will be availbe only in development
     async generateStock(req: Request, res: Response) {
         const product = await returnProductByName(req.body.name);

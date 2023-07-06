@@ -9,13 +9,15 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { asyncHandle } from "../middleware/errorHandler";
 
 function generateEmployee(): Employee {
+    const tempName = faker.person.fullName();
+
     return {
-        employee_id: faker.string.uuid(),
-        name: faker.person.fullName(),
+        employee_id: crypto.randomUUID(),
+        name: tempName,
         password: "bcrypt2412",
-        username: faker.internet.email({ provider: "" }),
+        username: tempName + "@gmail.com",
         contact_no: faker.phone.number(),
-        position: faker.person.jobArea(),
+        position: "employee",
         img_src: faker.image.avatarGitHub()
     };
 }
@@ -51,7 +53,6 @@ const getAllEmployee = asyncHandle(async (req: Request, res: Response) => {
     res.send(data);
 });
 
-// const  = asyncHandle(async)
 const getEmployeeById = asyncHandle(async (req: Request, res: Response) => {
     const data = await findEmployeeById(req.params.id);
 
@@ -66,18 +67,15 @@ const deleteEmployeeById = asyncHandle(async (req: Request, res: Response) => {
 })
 
 const createEmployee = asyncHandle(async (req: Request, res: Response) => {
-    const { error } = joiEmployee.validate(req.body);
-    if (error?.message) throw new Error(error?.message);
-
-    console.log(req.body.img_src || 2);
-
-
     const employee: Employee = {
         ...req.body,
         employee_id: crypto.randomUUID(),
-        is_admin: req.body.is_admin || false,
+        position: req.body.position || false,
         img_src: req.body.img_src || "https://avatars.githubusercontent.com/u/10021",
     };
+
+    const { error } = joiEmployee.validate(req.body);
+    if (error?.message) throw new Error(error?.message);
 
 
     const userNameExist = await findEmployeeByUserName(employee.username);
@@ -116,7 +114,7 @@ const updateEmployee = asyncHandle(async (req: Request, res: Response) => {
     const employee: Employee = {
         ...req.body,
         password: employeeDatabase.password,  // must update password with bcrypt
-        is_admin: req.body.is_admin || false,
+        position: req.body.position || false,
     };
 
     const { error } = joiEmployee.validate(req.body);
@@ -137,9 +135,37 @@ const updateEmployee = asyncHandle(async (req: Request, res: Response) => {
         ]
     );
 
+    res.send([employeeDatabase, employee]).status(200);
+});
+
+const editInfoEmployee = asyncHandle(asyncHandle(async (req: Request, res: Response) => {
+    const requestId = req.body.employee_id || req.params.id;
+    if (!requestId) throw new Error("Invalid Request: no id request");
+
+    const employeeDatabase = await findEmployeeById(requestId);
+    const employee: Employee = {
+        ...req.body,
+        password: employeeDatabase.password,  // must update password with bcrypt
+        position: req.body.position || false,
+    };
+
+    const { error } = joiEmployee.validate(employee);
+    if (error?.message) throw new Error(error?.message);
+
+    await sqlExe(
+        "UPDATE `employee` SET `name`= ?,`username`= ?, `contact_no`= ?, `position` = ? WHERE `employee_id` = ?",
+        [
+            employee.name,
+            employee.username,
+            employee.contact_no,
+            employee.position,
+            requestId,
+        ]
+    );
 
     res.send([employeeDatabase, employee]).status(200);
-})
+}));
+
 
 const loginEmployee = asyncHandle(async (req: Request, res: Response) => {
     const loginData = { ...req.body };
@@ -157,12 +183,10 @@ const loginEmployee = asyncHandle(async (req: Request, res: Response) => {
         process.env.JWT_SECRET_KEY || "",
         { expiresIn: "3d", }
     );
-    console.log(tokenCreate, 400);
-
-
 
     res.send(tokenCreate).status(200);
-})
+});
+
 const authenticateEmployee = asyncHandle(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization?.split(' ')[1];
 
@@ -177,7 +201,7 @@ const authenticateEmployee = asyncHandle(async (req: Request, res: Response, nex
     }
 
     next();
-})
+});
 
 // exported controllers
 export default {
@@ -188,6 +212,7 @@ export default {
     updateEmployee,
     createEmployee,
     deleteEmployeeById,
+    editInfoEmployee,
 
     // ALL controller below will be availbe only in development
     async genereteEmployee(req: Request, res: Response) {

@@ -4,21 +4,23 @@ import { asyncHandle } from "../middleware/errorHandler";
 
 const routerEmployee = express.Router();
 
-routerEmployee.post("/login", asyncHandle(employee.loginEmployee));
-routerEmployee.post("/generate", asyncHandle(employee.authenticateEmployee), asyncHandle(employee.genereteEmployee));
-routerEmployee.get("/auth", asyncHandle(employee.authenticateEmployee), asyncHandle(employee.getAllEmployee));
-routerEmployee.delete("/name/:name", asyncHandle(employee.deleteEmployeeByName));
+routerEmployee.post("/login", employee.loginEmployee);
+routerEmployee.post("/generate", [employee.authenticateEmployee], employee.genereteEmployee);
+routerEmployee.get("/auth", [employee.authenticateEmployee], employee.getAllEmployee);
+routerEmployee.delete("/name/:name", employee.deleteEmployeeByName);
+routerEmployee.put("/edit/", employee.editInfoEmployee)
 
 routerEmployee
     .route("/")
-    .get(asyncHandle(employee.getAllEmployee))
-    .post(asyncHandle(employee.createEmployee))
-    .put(asyncHandle(employee.updateEmployee));
+    .get(employee.getAllEmployee)
+    .post(employee.createEmployee)
+    .put(employee.updateEmployee)
+    .put(employee.updateEmployee);
 
 routerEmployee
     .route("/:id")
-    .get(asyncHandle(employee.getEmployeeById))
-    .put(asyncHandle(employee.updateEmployee))
-    .delete(asyncHandle(employee.deleteEmployeeById));
+    .get(employee.getEmployeeById)
+    .put(employee.updateEmployee)
+    .delete(employee.deleteEmployeeById);
 
 export default routerEmployee;

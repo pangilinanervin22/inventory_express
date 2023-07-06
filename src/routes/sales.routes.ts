@@ -1,27 +1,26 @@
 import express, { Request, Response } from "express";
 import sales from "../controller/sales";
-import { asyncHandle } from "../middleware/errorHandler";
+
 
 const routerSales = express.Router();
 
-
-routerSales.post("/generate", asyncHandle(sales.generateSales));
-routerSales.get("/total", asyncHandle(sales.getAllSales));
+routerSales.post("/generate", sales.generateSales);
+routerSales.get("/total", sales.getAllSales);
 
 
 routerSales
     .route("/:id")
-    .get(asyncHandle(sales.getSalesById))
-    .delete(asyncHandle(sales.deleteSalesById))
-    .put(asyncHandle(sales.updateSales));
+    .get(sales.getSalesById)
+    .delete(sales.deleteSalesById)
+    .put(sales.updateSales);
 
 
 routerSales
     .route("/")
-    .get(asyncHandle(sales.getAllSales))
-    .post(asyncHandle(sales.createSales))
-    .put(asyncHandle(sales.updateSales))
-    .post(asyncHandle(sales.createSales));
+    .get(sales.getAllSales)
+    .post(sales.createSales)
+    .put(sales.updateSales)
+    .post(sales.createSales);
 
 
 

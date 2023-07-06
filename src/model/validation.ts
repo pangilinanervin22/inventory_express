@@ -4,7 +4,7 @@ export const joiEmployee = Joi.object({
     name: Joi.string().max(70).min(2).required(),
     username: Joi.string().max(70).min(5).required(),
     contact_no: Joi.string().min(5).required(),
-    password: Joi.string().max(30).min(8).required(),
+    password: Joi.string().max(255).min(8).required(),
     employee_id: Joi.string().max(255).optional(),
     position: Joi.string().max(255).optional(),
     img_src: Joi.string().max(255).optional(),
