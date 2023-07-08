@@ -14,6 +14,7 @@ import routerProduct from "./routes/product.routes";
 import routerEmployee from "./routes/employee.routes";
 import routerStock from "./routes/stock.routes";
 import routerSales from "./routes/sales.routes";
+import routerReport from "./routes/report.routes";
 
 const app: Application = express();
 
@@ -37,6 +38,7 @@ app.use("/api/product", routerProduct);
 app.use("/api/stock", routerStock);
 app.use("/api/stock", routerStock);
 app.use("/api/sales", routerSales);
+app.use("/api/report", routerReport);
 
 
 //error handlers
