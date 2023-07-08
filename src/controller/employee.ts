@@ -17,7 +17,7 @@ function generateEmployee(): Employee {
         password: "bcrypt2412",
         username: tempName + "@gmail.com",
         contact_no: faker.phone.number(),
-        position: "employee",
+        position: "guest",
         img_src: faker.image.avatarGitHub()
     };
 }
@@ -48,7 +48,7 @@ async function findEmployeeByUserName(input: string) {
 }
 
 const getAllEmployee = asyncHandle(async (req: Request, res: Response) => {
-    const data = await sqlExe("SELECT `employee_id`, `name`, `username`, `contact_no`, `position` FROM ??", "employee");
+    const data = await sqlExe("SELECT `employee_id`, `name`, `username`, `contact_no`, `position`, `img_src` FROM ??", "employee");
 
     res.send(data);
 });
@@ -70,7 +70,7 @@ const createEmployee = asyncHandle(async (req: Request, res: Response) => {
     const employee: Employee = {
         ...req.body,
         employee_id: crypto.randomUUID(),
-        position: req.body.position || false,
+        position: req.body.position || "guest",
         img_src: req.body.img_src || "https://avatars.githubusercontent.com/u/10021",
     };
 
@@ -103,7 +103,13 @@ const createEmployee = asyncHandle(async (req: Request, res: Response) => {
         { expiresIn: "7d", }
     );
 
-    res.send({ data: employee, token: tokenCreate }).status(200);
+    const dataSend = {
+        token: tokenCreate,
+        position: employee.position.replace('"', ""),
+        img_src: employee.img_src
+    }
+
+    res.send(dataSend).status(200);
 })
 
 const updateEmployee = asyncHandle(async (req: Request, res: Response) => {
@@ -139,6 +145,8 @@ const updateEmployee = asyncHandle(async (req: Request, res: Response) => {
 });
 
 const editInfoEmployee = asyncHandle(asyncHandle(async (req: Request, res: Response) => {
+    console.log(req.body);
+
     const requestId = req.body.employee_id || req.params.id;
     if (!requestId) throw new Error("Invalid Request: no id request");
 
@@ -146,19 +154,20 @@ const editInfoEmployee = asyncHandle(asyncHandle(async (req: Request, res: Respo
     const employee: Employee = {
         ...req.body,
         password: employeeDatabase.password,  // must update password with bcrypt
-        position: req.body.position || false,
+        position: req.body.position || "guest",
     };
 
     const { error } = joiEmployee.validate(employee);
     if (error?.message) throw new Error(error?.message);
 
     await sqlExe(
-        "UPDATE `employee` SET `name`= ?,`username`= ?, `contact_no`= ?, `position` = ? WHERE `employee_id` = ?",
+        "UPDATE `employee` SET `name`= ?,`username`= ?, `contact_no`= ?, `position` = ?, `img_src`= ? WHERE `employee_id` = ?",
         [
             employee.name,
             employee.username,
             employee.contact_no,
             employee.position,
+            employee.img_src,
             requestId,
         ]
     );
@@ -170,7 +179,7 @@ const editInfoEmployee = asyncHandle(asyncHandle(async (req: Request, res: Respo
 const loginEmployee = asyncHandle(async (req: Request, res: Response) => {
     const loginData = { ...req.body };
 
-    const employee = await findEmployeeByUserName(loginData.username);
+    const employee: Employee = await findEmployeeByUserName(loginData.username);
     if (!employee) throw new Error("Username not exist");
 
     const passwordMatch = await bcrypt.compare(
@@ -179,12 +188,18 @@ const loginEmployee = asyncHandle(async (req: Request, res: Response) => {
     );
 
     if (passwordMatch === false) throw new Error("Password don't match");
-    const tokenCreate = jwt.sign({ employee_id: employee.employee_id, poistion: employee.poistion },
+    const tokenCreate = jwt.sign({ employee_id: employee.employee_id, poistion: employee.position },
         process.env.JWT_SECRET_KEY || "",
         { expiresIn: "3d", }
     );
 
-    res.send(tokenCreate).status(200);
+    const dataSend = {
+        token: tokenCreate,
+        position: employee.position,
+        img_src: employee.img_src
+    }
+
+    res.send(dataSend).status(200);
 });
 
 const authenticateEmployee = asyncHandle(async (req: Request, res: Response, next: NextFunction) => {

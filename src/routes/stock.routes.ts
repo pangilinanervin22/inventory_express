@@ -1,12 +1,11 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import stock from "../controller/stock";
-import { asyncHandle } from "../middleware/errorHandler";
+
 
 const routerStock = express.Router();
 
 
 routerStock.post("/generate", stock.generateStock);
-routerStock.get("/total", stock.getTotalStock);
 
 routerStock
     .route("/:id")

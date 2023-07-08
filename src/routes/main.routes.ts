@@ -12,6 +12,8 @@ routerMain.get("/main/random/picture", (req, res) => {
 });
 
 routerMain.get("/main/random/id", (req, res) => {
+	console.log(req.body);
+
 	res.send(randomUUID());
 });
 

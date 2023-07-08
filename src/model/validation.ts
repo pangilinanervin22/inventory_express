@@ -30,6 +30,6 @@ export const joiStock = Joi.object({
 export const joiSales = Joi.object({
     sales_id: Joi.string().max(255).optional(),
     product_id: Joi.string().max(255).required(),
-    total_price: Joi.number().min(0).max(100000).required(),
+    total_price: Joi.number().max(100000).required(),
     sales_date: Joi.date().required(),
 });

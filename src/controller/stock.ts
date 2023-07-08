@@ -43,20 +43,6 @@ const getAllStock = asyncHandle(async (req: Request, res: Response) => {
     res.send(data);
 });
 
-const getTotalStock = asyncHandle(async (req: Request, res: Response) => {
-    const data = await sqlExe(`SELECT SUM(S.quantity), P.name FROM stock AS S CROSS
-        JOIN product AS P WHERE S.product_id = P.product_id GROUP BY P.product_id;`);
-
-    // total stock
-    // const data = await sqlExe(`SELECT SUM(S.quantity) FROM stock AS S;`);
-
-    // by month
-    // const data =
-    //     await sqlExe(`SELECT DATE_FORMAT(s.production_date, '%Y-%m') AS month_year, SUM(S.quantity) FROM stock AS S
-    //      GROUP BY DATE_FORMAT(s.production_date, '%Y-%m') ORDER BY DATE_FORMAT(s.production_date, '%Y-%m');`);
-    res.send(data);
-});
-
 const getStockById = asyncHandle(async (req: Request, res: Response) => {
     await returnStockById(req.params.id);
     const data = await sqlExe(
@@ -126,7 +112,6 @@ const updateStock = asyncHandle(async (req: Request, res: Response) => {
 // exported controllers
 export default {
     getAllStock,
-    getTotalStock,
     getStockById,
     createStock,
     updateStock,

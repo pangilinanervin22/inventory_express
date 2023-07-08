@@ -1,6 +1,6 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import employee from "../controller/employee";
-import { asyncHandle } from "../middleware/errorHandler";
+
 
 const routerEmployee = express.Router();
 

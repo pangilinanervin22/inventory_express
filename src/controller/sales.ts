@@ -23,12 +23,12 @@ async function returnSaleById(sales_id: string) {
     );
 
     if (data.length == 0) throw new Error("Invalid request: sales not exist");
-    return data;
+    return data[0];
 }
 
 const getAllSales = asyncHandle(async (req: Request, res: Response) => {
     const data =
-        await sqlExe(`SELECT sales_id, product.name,sales.product_id,total_price ,sales_date  
+        await sqlExe(`SELECT sales_id, product.name, sales.product_id, total_price, sales_date  
         FROM sales CROSS JOIN product WHERE sales.product_id = product.product_id;
         `);
 
@@ -75,10 +75,11 @@ const createSales = asyncHandle(async (req: Request, res: Response) => {
     res.send(sales).status(200);
 });
 
-
 const updateSales = asyncHandle(async (req: Request, res: Response) => {
     const data = await returnSaleById(req.params.id || req.body.sales_id);
     const sales: Sales = { ...data, ...req.body };
+
+    console.log(sales);
 
     const { error } = joiSales.validate(sales);
     if (error?.message) throw new Error(error?.message);
