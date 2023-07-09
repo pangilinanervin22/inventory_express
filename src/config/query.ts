@@ -78,7 +78,7 @@ const stringQuery = `
         PRIMARY KEY(employee_id)); 
 
         ALTER TABLE stock ADD CONSTRAINT product_stock 
-        FOREIGN KEY(product_id) REFERENCES employee(employee_id) 
+        FOREIGN KEY(product_id) REFERENCES product(product_id) 
         ON DELETE CASCADE ON UPDATE RESTRICT; 
 
         ALTER TABLE sales ADD CONSTRAINT product_sales FOREIGN KEY

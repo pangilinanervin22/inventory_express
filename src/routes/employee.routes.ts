@@ -4,11 +4,12 @@ import employee from "../controller/employee";
 
 const routerEmployee = express.Router();
 
+routerEmployee.put("/edit/", employee.editInfoEmployee);
+routerEmployee.get("/token/", employee.getEmployeeByToken)
 routerEmployee.post("/login", employee.loginEmployee);
+routerEmployee.delete("/name/:name", employee.deleteEmployeeByName);
 routerEmployee.post("/generate", [employee.authenticateEmployee], employee.genereteEmployee);
 routerEmployee.get("/auth", [employee.authenticateEmployee], employee.getAllEmployee);
-routerEmployee.delete("/name/:name", employee.deleteEmployeeByName);
-routerEmployee.put("/edit/", employee.editInfoEmployee)
 
 routerEmployee
     .route("/")

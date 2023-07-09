@@ -58,10 +58,11 @@ const getTotal = asyncHandle(async (req: Request, res: Response) => {
 });
 
 const getSalesReport = asyncHandle(async (req: Request, res: Response) => {
-    const data = await sqlExe(`SELECT  MONTHNAME(sales_date) AS month,
+    const data = await sqlExe(`
+        SELECT MONTHNAME(sales_date) AS month,
         YEAR(sales_date) as year,
         SUM(total_price) AS total_sales
-        FROM sales WHERE sales_date >= DATE_SUB(CURRENT_DATE, INTERVAL 6 MONTH)
+        FROM sales WHERE sales_date >= DATE_SUB(CURRENT_DATE, INTERVAL 5 MONTH)
         GROUP BY YEAR(sales_date), MONTH(sales_date) ORDER BY sales_date;`);
 
     res.send(data);

@@ -9,12 +9,13 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { asyncHandle } from "../middleware/errorHandler";
 
 function generateEmployee(): Employee {
-    const tempName = faker.person.fullName();
+    const tempName = faker.person.firstName();
+    const insert = tempName + " " + faker.person.lastName();
 
     return {
         employee_id: crypto.randomUUID(),
-        name: tempName,
-        password: "bcrypt2412",
+        name: insert,
+        password: "passwordchoco",
         username: tempName + "@gmail.com",
         contact_no: faker.phone.number(),
         position: "guest",
@@ -181,6 +182,8 @@ const loginEmployee = asyncHandle(async (req: Request, res: Response) => {
 
     const employee: Employee = await findEmployeeByUserName(loginData.username);
     if (!employee) throw new Error("Username not exist");
+    if (employee.position == "guest") throw new Error("Username not currently confirm");
+
 
     const passwordMatch = await bcrypt.compare(
         loginData.password,
@@ -218,6 +221,32 @@ const authenticateEmployee = asyncHandle(async (req: Request, res: Response, nex
     next();
 });
 
+const getEmployeeByToken = asyncHandle(async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) return res.status(401).send('Authorization token missing');
+
+    try {
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY || "") as JwtPayload;
+        const employee: Employee = await findEmployeeById(decodedToken.employee_id);
+
+        const sendData = {
+            employee_id: employee.employee_id,
+            name: employee.name,
+            username: employee.username,
+            img_src: employee.img_src,
+            position: employee.position,
+            contact_no: employee.contact_no,
+        }
+        res.status(200).send(sendData);
+        return;
+    } catch (error) {
+        console.log(error);
+    }
+
+    res.status(401).send('Authorization token missing');
+});
+
 // exported controllers
 export default {
     getAllEmployee,
@@ -228,6 +257,7 @@ export default {
     createEmployee,
     deleteEmployeeById,
     editInfoEmployee,
+    getEmployeeByToken,
 
     // ALL controller below will be availbe only in development
     async genereteEmployee(req: Request, res: Response) {
