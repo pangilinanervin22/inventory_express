@@ -99,18 +99,8 @@ const createEmployee = asyncHandle(async (req: Request, res: Response) => {
         ]
     );
 
-    const tokenCreate = jwt.sign({ employee_id: employee.employee_id, position: employee.position },
-        process.env.JWT_SECRET_KEY || "",
-        { expiresIn: "7d", }
-    );
 
-    const dataSend = {
-        token: tokenCreate,
-        position: employee.position.replace('"', ""),
-        img_src: employee.img_src
-    }
-
-    res.send(dataSend).status(200);
+    res.send("Your account has been created.").status(200);
 })
 
 const updateEmployee = asyncHandle(async (req: Request, res: Response) => {
