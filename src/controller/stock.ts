@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { faker } from "@faker-js/faker";
 import crypto from "crypto";
 import { sqlExe } from "../config/database";
-import { Stock } from "../model/types";
-import { joiStock } from "../model/validation";
+import { Sales, Stock } from "../model/types";
+import { joiSales, joiStock } from "../model/validation";
 import { returnProductById, returnProductByName } from "./product";
 import { asyncHandle } from "../middleware/errorHandler";
+import process from "process";
 
 function generateStock(product_id: string): Stock {
     return {
@@ -37,7 +38,7 @@ async function returnStockByProductId(product_id: string) {
 
 const getAllStock = asyncHandle(async (req: Request, res: Response) => {
     const data =
-        await sqlExe(`SELECT S.stock_id, P.product_id, P.name, S.quantity, S.production_date, S.expiration_date 
+        await sqlExe(`SELECT S.stock_id, P.product_id, P.name, S.quantity, S.production_date, S.expiration_date, P.price 
         FROM stock AS S CROSS JOIN product AS P WHERE S.product_id = P.product_id;`);
 
     res.send(data);
@@ -88,11 +89,12 @@ const createStock = asyncHandle(async (req: Request, res: Response) => {
 });
 
 const updateStock = asyncHandle(async (req: Request, res: Response) => {
-    const data = await returnStockById(req.params.id || req.body.stock_id);
+    const data: Stock = await returnStockById(req.params.id || req.body.stock_id);
     const stock: Stock = { ...data, ...req.body };
 
     const { error } = joiStock.validate(stock);
     if (error?.message) throw new Error(error?.message);
+    if (data.quantity < 0) throw new Error("Can't update request stock is below zero");
 
     const fetch = await sqlExe(
         "UPDATE `stock` SET `product_id` = ?, `quantity` = ?, `production_date` = ?, `expiration_date` = ? WHERE stock_id = ?;",
@@ -109,6 +111,68 @@ const updateStock = asyncHandle(async (req: Request, res: Response) => {
     res.send([data, stock]).status(200);
 });
 
+const posAction = asyncHandle(async (req: Request, res: Response) => {
+    const requestDataList = req.body || [];
+    console.log(requestDataList);
+
+    if (requestDataList.length === 0) throw new Error("List of request is empty")
+    // const requestData = [
+    //     { quantity: 1, stock_id: 'def67965-4774-4b54-86c5-553adf36f324', price: 180 }, //40
+    //     { quantity: 100, stock_id: '4b41c425-9169-4d2f-96f6-2ec3b2faebdb', price: 40 }, // 30
+    //     { stock_id: "cb2c7d94-6cd1-43be-ad6c-246bfeb7e601", price: 160, quantity: 12, } //12
+    // ];
+
+    //validation of list of data
+    for await (const item of requestDataList) {
+        if (item.quantity < 1) throw new Error("Request of quantity most not below 1");
+
+        const data: Stock = await returnStockById(item.stock_id);
+        if (item.quantity > data.quantity) throw new Error("Request of quantity is greate than orignal");
+        else if ((item.quantity - data.quantity) === 0) continue;
+
+        const requestStock: Stock = { ...data, quantity: (data.quantity - item.quantity) };
+        const { error } = joiStock.validate(requestStock);
+        if (error?.message) throw new Error(error?.message);
+    }
+
+    // process list of pos data
+    const procsss = requestDataList.map(async (item: any) => {
+        const stockData: Stock = await returnStockById(item.stock_id);
+        if ((item.quantity - stockData.quantity) === 0)
+            await sqlExe("DELETE FROM stock WHERE stock_id = ?", item.stock_id);
+        else {
+            const requestStock: Stock = { ...stockData, quantity: (stockData.quantity - item.quantity) };
+            await sqlExe(
+                "UPDATE `stock` SET `quantity` = ? WHERE stock_id = ?;",
+                [
+                    requestStock.quantity,
+                    requestStock.stock_id
+                ]
+            );
+        }
+
+        const sales: Sales = {
+            sales_id: crypto.randomUUID(),
+            product_id: stockData.product_id,
+            sales_date: new Date(),
+            total_price: item.price * item.quantity
+        };
+
+        return await sqlExe(
+            "INSERT INTO `sales`(`sales_id`, `product_id`, `total_price`, `sales_date`) VALUES (?,?,?,?);",
+            [
+                sales.sales_id,
+                sales.product_id,
+                sales.total_price,
+                sales.sales_date,
+            ]
+        );
+    })
+
+    await Promise.all(procsss)
+    res.send("Sales are successfully process").status(200);
+});
+
 // exported controllers
 export default {
     getAllStock,
@@ -116,6 +180,7 @@ export default {
     createStock,
     updateStock,
     deleteStockById,
+    posAction,
     // ALL controller below will be availbe only in development
     async generateStock(req: Request, res: Response) {
         const product = await returnProductByName(req.body.name);

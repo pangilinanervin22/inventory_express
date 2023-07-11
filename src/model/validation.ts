@@ -21,7 +21,7 @@ export const joiProduct = Joi.object({
 export const joiStock = Joi.object({
     stock_id: Joi.string().max(255).optional(),
     product_id: Joi.string().max(255).required(),
-    quantity: Joi.number().min(0).max(1000).required(),
+    quantity: Joi.number().min(1).max(1000).required(),
     production_date: Joi.date().required(),
     expiration_date: Joi.date().required(),
 });
