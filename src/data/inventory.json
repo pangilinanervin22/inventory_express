@@ -1,0 +1,63 @@
+[
+{"type":"header","version":"5.2.0","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"inventory"},
+{"type":"table","name":"employee","database":"inventory","data":
+[
+{"employee_id":"29bda91f-ec47-4116-a98d-4680cf3c338a","name":"Cedric Nigga","username":"cedric@gmail.com","password":"$2b$10$blZsbqwbBy3ymzFcrJU6mOwTUh8uAJK6OMVq7Eh6ORPwqgyS0Srkq","contact_no":"0982733224","position":"employee","img_src":"https:\/\/upcdn.io\/W142hJk\/raw\/demo\/4mKQ47NuHz.png"},
+{"employee_id":"2f711073-070a-4fc5-a305-f340a5493359","name":"Mark Barnido","username":"mark@gmail.com","password":"$2b$10$J9ZY7w3P6b0fbj1XQ86SneWreXqQHNPjSgVxh3RnEwFdlbmQd7OHu","contact_no":"0696969699","position":"employee","img_src":"https:\/\/upcdn.io\/W142hJk\/raw\/demo\/4mKQFKjzAL.jpg"},
+{"employee_id":"3b07133e-c992-46f0-bc5e-5720700bd362","name":"tin tin","username":"tin@gmail.com","password":"$2b$10$vf1pi1qFI1\/JKSTmg5PxJehaZn\/fr4IhKDYAlruZrxMbU1DLTeHca","contact_no":"09587654986","position":"employee","img_src":"https:\/\/avatars.githubusercontent.com\/u\/10021"},
+{"employee_id":"4b56cda8-cf4f-42e8-ba7d-7c67c90573a1","name":"Ervin Pangilinan","username":"ervin2002","password":"$2b$10$3IenC9nEcjzH\/2otAD8alujCzn8vdr7zoa6LljSpQsDh9ftpPyxX2","contact_no":"9645611441","position":"owner","img_src":"https:\/\/avatars.githubusercontent.com\/u\/10021"},
+{"employee_id":"646bb411-4040-4ef9-aa62-bd3e1d79ef05","name":"Vin Pangilinan","username":"vinvin@gmail.com","password":"$2b$10$FESISE.LAd\/HMuOq4atWTeMi5paVT4qhNf6.GfePotbA.Tv0poKYS","contact_no":"09458761057","position":"employee","img_src":"https:\/\/avatars.githubusercontent.com\/u\/10021"},
+{"employee_id":"7136c708-54cb-47fb-a269-bb1973810c2c","name":"Lue Nigga","username":"lue@gmail.com","password":"$2b$10$.9TOBpCzeaCbZYDVIytX7OwwF2S\/adpcWqRLCK1WxnNsYGx5MeOVa","contact_no":"974824903","position":"guest","img_src":"https:\/\/avatars.githubusercontent.com\/u\/10021"},
+{"employee_id":"9abff3d2-f103-4482-b2d1-8fe0c6752039","name":"Anton Sales","username":"antonsales@gmail.com","password":"$2b$10$2sfXYFkrgZx5VLHfrN6ky.gy.50rOG.5oHBfVNh87yubM\/dwjMn7a","contact_no":"09897645808","position":"employee","img_src":"https:\/\/avatars.githubusercontent.com\/u\/40146734"},
+{"employee_id":"c542a16f-a68e-48ab-9adc-f60fe7cb91cc","name":"ella rojas","username":"ella@gmail.com","password":"$2b$10$WidSVhDH3ERADDXkJA0vEeGiBSKrzcJWvM\/6ATkL5IVOLIpaSrP\/a","contact_no":"09458761058","position":"admin","img_src":"https:\/\/avatars.githubusercontent.com\/u\/10021"},
+{"employee_id":"ed6ed32b-1bcf-4419-a4f9-9d3d11ab5ee4","name":"Lorena Ayap","username":"lorenaayap@gmail.com","password":"$2b$10$zqkepAupMxzqiJ92jfqn7ebeqgJ1boz\/vIoxAY2mAy3IFcGVxGAAy","contact_no":"09497824903","position":"admin","img_src":"https:\/\/avatars.githubusercontent.com\/u\/26884717"},
+{"employee_id":"f186ac23-a968-47cf-b6ae-c0c4d3a6dd04","name":"Sunshine","username":"sunshine@gmail.com","password":"$2b$10$MZImlXsI1unjb9I8E\/.YfuQ5HT4HUtzDX0rUFqMQSAyjgBGhtzHBi","contact_no":"09423647232","position":"guest","img_src":"https:\/\/avatars.githubusercontent.com\/u\/60054411"},
+{"employee_id":"fad3e6c6-b161-474e-ae3c-82b98709e3db","name":"Employee Sample","username":"employees@gmail.com","password":"$2b$10$ww2lWhUB4aq4PvYUcib3T.8EKVaMfQ6BYkVvyDpmyYuxYfWFd0BGq","contact_no":"0616123123","position":"employee","img_src":"https:\/\/avatars.githubusercontent.com\/u\/10021"}
+]
+}
+,{"type":"table","name":"product","database":"inventory","data":
+[
+{"product_id":"004564ab-997b-4b0e-98cf-7942c554d1ea","name":"Macademia","price":"99","brand":"Lotte"},
+{"product_id":"13259b5c-1932-488e-b1a0-9e40aa6dcf2b","name":"Toblerone Original 100g","price":"150","brand":"Toblerone "},
+{"product_id":"190d019f-5550-4c68-8ea2-b0d08bc1859e","name":"Toblerone Dark Chocolate 100g","price":"160","brand":"Toblerone "},
+{"product_id":"1ee17a4a-ddf2-469e-9174-ef5840524c86","name":"Pocky","price":"40","brand":"Nestle"},
+{"product_id":"220cb994-0a65-4b51-8e3e-442a115e1243","name":"kitkat","price":"40","brand":"nestle"},
+{"product_id":"87457afa-7dc2-4524-a255-2763b403ad04","name":"Ferrero Rocher (24pcs)","price":"800","brand":"Ferrero"},
+{"product_id":"ac0c4b6e-6cbe-44fc-b3b0-ed638952c0dd","name":"Ghana","price":"65","brand":"Meiji"},
+{"product_id":"cb26d4fc-3b57-486a-9fd7-5a78262d1a14","name":"CHOCO CHOCO","price":"20","brand":"nestle"},
+{"product_id":"d06936e1-f831-4c53-aa38-ee071a6c98ba","name":"asong nigga","price":"1000","brand":"china"},
+{"product_id":"e5913f12-2a1a-44ce-b70a-e9332f6e43ae","name":"ABC","price":"80","brand":"Meiji"},
+{"product_id":"e7de6359-3220-4919-b9f0-a1151bd7650f","name":"Almonds","price":"100","brand":"Lotte"}
+]
+}
+,{"type":"table","name":"sales","database":"inventory","data":
+[
+{"sales_id":"12af247e-b968-4ddb-9904-fa07cdd9c87b","product_id":"190d019f-5550-4c68-8ea2-b0d08bc1859e","total_price":"4000","sales_date":"2023-02-14"},
+{"sales_id":"19ece21c-6f18-42d6-9f89-13164ef2e5f1","product_id":"e5913f12-2a1a-44ce-b70a-e9332f6e43ae","total_price":"240","sales_date":"2023-07-12"},
+{"sales_id":"23ee1d18-bab1-4b28-a957-4891eda7199e","product_id":"ac0c4b6e-6cbe-44fc-b3b0-ed638952c0dd","total_price":"8200","sales_date":"2023-05-10"},
+{"sales_id":"255d9437-d0e0-4941-b105-5ca0e35b75f6","product_id":"87457afa-7dc2-4524-a255-2763b403ad04","total_price":"1600","sales_date":"2023-07-12"},
+{"sales_id":"2f1587e5-cb05-4e1e-a9df-97072f773bb6","product_id":"1ee17a4a-ddf2-469e-9174-ef5840524c86","total_price":"7900","sales_date":"2023-04-14"},
+{"sales_id":"9c8db787-59e4-4c36-b1dd-19df439d304d","product_id":"220cb994-0a65-4b51-8e3e-442a115e1243","total_price":"5000","sales_date":"2023-03-22"},
+{"sales_id":"9faf6c2c-73e3-423a-8806-eb27fc2b3142","product_id":"e7de6359-3220-4919-b9f0-a1151bd7650f","total_price":"700","sales_date":"2023-07-11"},
+{"sales_id":"a3056887-95f1-43d7-af64-162f2ed037d5","product_id":"1ee17a4a-ddf2-469e-9174-ef5840524c86","total_price":"6000","sales_date":"2023-02-14"},
+{"sales_id":"bfb0eb6d-1209-4b50-a9db-a9b18c4cc240","product_id":"220cb994-0a65-4b51-8e3e-442a115e1243","total_price":"7400","sales_date":"2023-07-10"},
+{"sales_id":"cdd75851-a60e-4dc5-bcc1-725ae1ad5802","product_id":"13259b5c-1932-488e-b1a0-9e40aa6dcf2b","total_price":"5500","sales_date":"2023-03-15"},
+{"sales_id":"d6552e62-89e0-4434-8e68-3ab5d645c258","product_id":"004564ab-997b-4b0e-98cf-7942c554d1ea","total_price":"4000","sales_date":"2023-06-06"},
+{"sales_id":"d8bfb123-1bf1-4b4c-ad73-53d60c16ce45","product_id":"13259b5c-1932-488e-b1a0-9e40aa6dcf2b","total_price":"4000","sales_date":"2023-02-09"},
+{"sales_id":"f39d8fc1-4b83-4674-9b92-3a418f5342d6","product_id":"87457afa-7dc2-4524-a255-2763b403ad04","total_price":"2500","sales_date":"2023-02-10"}
+]
+}
+,{"type":"table","name":"stock","database":"inventory","data":
+[
+{"stock_id":"11868101-66d3-47a2-8eae-52cf28664164","product_id":"004564ab-997b-4b0e-98cf-7942c554d1ea","quantity":"20","production_date":"2023-06-29","expiration_date":"2027-02-23"},
+{"stock_id":"16e17a72-36c8-4223-bdd1-ca60d0e239c9","product_id":"ac0c4b6e-6cbe-44fc-b3b0-ed638952c0dd","quantity":"20","production_date":"2023-06-10","expiration_date":"2024-07-10"},
+{"stock_id":"1fcef574-895d-44bc-9523-29d312b13ac6","product_id":"d06936e1-f831-4c53-aa38-ee071a6c98ba","quantity":"2","production_date":"2023-07-11","expiration_date":"2023-07-31"},
+{"stock_id":"4b41c425-9169-4d2f-96f6-2ec3b2faebdb","product_id":"1ee17a4a-ddf2-469e-9174-ef5840524c86","quantity":"30","production_date":"2023-07-10","expiration_date":"2025-08-10"},
+{"stock_id":"55439fff-e026-49c4-b5f3-5a78f99bc7f7","product_id":"87457afa-7dc2-4524-a255-2763b403ad04","quantity":"10","production_date":"2023-07-10","expiration_date":"2025-10-13"},
+{"stock_id":"b6158d16-51ff-4231-b912-a128f714eeb7","product_id":"220cb994-0a65-4b51-8e3e-442a115e1243","quantity":"4","production_date":"2023-07-01","expiration_date":"2025-11-12"},
+{"stock_id":"cb2c7d94-6cd1-43be-ad6c-246bfeb7e601","product_id":"e7de6359-3220-4919-b9f0-a1151bd7650f","quantity":"5","production_date":"2023-07-13","expiration_date":"2025-11-13"},
+{"stock_id":"def67965-4774-4b54-86c5-553adf36f324","product_id":"e5913f12-2a1a-44ce-b70a-e9332f6e43ae","quantity":"20","production_date":"2023-07-11","expiration_date":"2026-06-24"}
+]
+}
+]
