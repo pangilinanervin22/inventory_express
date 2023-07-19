@@ -4,6 +4,7 @@ import employee from "../controller/employee";
 
 const routerEmployee = express.Router();
 
+routerEmployee.get("/employee", employee.getAllEmployee);
 routerEmployee.put("/edit/", employee.editInfoEmployee);
 routerEmployee.get("/token/", employee.getEmployeeByToken)
 routerEmployee.post("/login", employee.loginEmployee);

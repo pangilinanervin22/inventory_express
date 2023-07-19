@@ -6,6 +6,9 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import rateLimit from 'express-rate-limit'
+import swaggerUi from 'swagger-ui-express';
+import * as swaggerDocument from './config/openapi.json';
+// import main from './config/main.json'
 
 // importing middlewares and routers
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
@@ -30,6 +33,9 @@ app.use(rateLimit({
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 }))
+
+//documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //routes
 app.use("/api", mainRouter);
