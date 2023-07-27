@@ -17,7 +17,6 @@ routerEmployee
     .get(employee.getAllEmployee)
     .post(employee.createEmployee)
     .put(employee.updateEmployee)
-    .put(employee.updateEmployee);
 
 routerEmployee
     .route("/:id")

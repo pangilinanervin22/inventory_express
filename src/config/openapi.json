@@ -5,10 +5,19 @@
         "version": "1.0.0",
         "description": "API endpoints for managing products"
     },
+    "servers": [
+        {
+            "url": "http://localhost:5000/api",
+            "description": "Local host server"
+        }
+    ],
     "paths": {
-        "/products": {
+        "/product": {
             "get": {
                 "summary": "Get all products",
+                "tags": [
+                    "Product"
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -27,6 +36,9 @@
             },
             "post": {
                 "summary": "Create a new product",
+                "tags": [
+                    "Product"
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -51,9 +63,12 @@
                 }
             }
         },
-        "/products/{product_id}": {
+        "/product/{product_id}": {
             "get": {
                 "summary": "Get a product by ID",
+                "tags": [
+                    "Product"
+                ],
                 "parameters": [
                     {
                         "in": "path",
@@ -80,6 +95,9 @@
             },
             "put": {
                 "summary": "Update a product",
+                "tags": [
+                    "Product"
+                ],
                 "parameters": [
                     {
                         "in": "path",
@@ -116,6 +134,9 @@
             },
             "delete": {
                 "summary": "Delete a product",
+                "tags": [
+                    "Product"
+                ],
                 "parameters": [
                     {
                         "in": "path",
@@ -133,28 +154,501 @@
                     }
                 }
             }
+        },
+        "/stock": {
+            "get": {
+                "summary": "Get all stock",
+                "tags": [
+                    "Stock"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/components/schemas/Stock"
+                                            },
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Toblerone Original"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new Stock",
+                "tags": [
+                    "Stock"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Stock"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Stock created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Stock"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/stock/{stock_id}": {
+            "get": {
+                "summary": "Get a stock by ID",
+                "tags": [
+                    "Stock"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "ID of the stock"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Stock"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a Stock",
+                "tags": [
+                    "Stock"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "ID of the stock"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Stock"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Stock updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Stock"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a stock",
+                "tags": [
+                    "Stock"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "stock_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "ID of the stock"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Stock deleted successfully"
+                    }
+                }
+            }
+        },
+        "/sales": {
+            "get": {
+                "summary": "Get all sales",
+                "tags": [
+                    "Sales"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Sales"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new sales",
+                "tags": [
+                    "Sales"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Sales"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sales created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sales"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/sales/{sales_id}": {
+            "get": {
+                "summary": "Get a sales by ID",
+                "tags": [
+                    "Sales"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "sales_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "ID of the sales"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sales"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a Sales",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Sales"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "sales_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "ID of the sales"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Sales"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sales updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sales"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a sales",
+                "tags": [
+                    "Sales"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "sales_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "ID of the sales"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Sales deleted successfully"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    }
+                }
+            }
+        },
+        "/employee/auth": {
+            "get": {
+                "summary": "Get all employee (auth)",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Emplyoee"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Employee"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "responses": {
+            "UnauthorizedError": {
+                "description": "Access token is missing or invalid"
+            }
+        },
         "schemas": {
             "Product": {
                 "type": "object",
+                "required": [
+                    "name",
+                    "price",
+                    "brand"
+                ],
                 "properties": {
                     "product_id": {
                         "type": "string",
-                        "description": "The ID of the product"
+                        "description": "The ID of the product",
+                        "example": "aaaa-bbbb-cccc-dddd",
+                        "readOnly": true
                     },
                     "name": {
                         "type": "string",
-                        "description": "The name of the product"
+                        "description": "The name of the product",
+                        "example": "Dark Chocolate"
                     },
                     "price": {
                         "type": "number",
-                        "description": "The price of the product"
+                        "description": "The price of the product",
+                        "example": 150
                     },
                     "brand": {
                         "type": "string",
-                        "description": "The brand of the product"
+                        "description": "The brand of the product",
+                        "example": "Toblerone"
+                    }
+                }
+            },
+            "Stock": {
+                "type": "object",
+                "required": [
+                    "product_id",
+                    "quantity",
+                    "brand",
+                    "production_date",
+                    "expiration_date"
+                ],
+                "properties": {
+                    "stock_id": {
+                        "type": "string",
+                        "description": "The ID of the stock",
+                        "example": "aaaa-bbbb-cccc-ddd",
+                        "readOnly": true
+                    },
+                    "product_id": {
+                        "type": "string",
+                        "description": "The foreign ID of the product",
+                        "example": "aaaa-bbbb-cccc-dddd"
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "description": "The qunatity of stock product",
+                        "example": 30
+                    },
+                    "production_date": {
+                        "type": "string",
+                        "description": "The production date of the stock product",
+                        "example": "2023-06-14T00:00:00.000Z"
+                    },
+                    "expiration_date": {
+                        "type": "string",
+                        "description": "The expiration date of the stock product",
+                        "example": "2024-06-14T00:00:00.000Z"
+                    }
+                }
+            },
+            "Sales": {
+                "type": "object",
+                "required": [
+                    "product_id",
+                    "total_price",
+                    "sales_date"
+                ],
+                "properties": {
+                    "sales_id": {
+                        "type": "string",
+                        "description": "The ID of the stock",
+                        "example": "aaaa-bbbb-cccc-ddd"
+                    },
+                    "product_id": {
+                        "type": "string",
+                        "description": "The foreign ID of the product",
+                        "example": "aaaa-bbbb-cccc-dddd",
+                        "readOnly": true
+                    },
+                    "total_price": {
+                        "type": "number",
+                        "description": "The total price",
+                        "example": 30
+                    },
+                    "sales_date": {
+                        "type": "string",
+                        "description": "Date of the sales",
+                        "example": "2023-06-14T00:00:00.000Z"
+                    }
+                }
+            },
+            "Employee": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "username",
+                    "password",
+                    "contact_no"
+                ],
+                "properties": {
+                    "emyployee_id": {
+                        "type": "string",
+                        "description": "The ID of the employee",
+                        "example": "aaaa-bbbb-cccc-ddd",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Full name of the user",
+                        "example": "Sample Name"
+                    },
+                    "username": {
+                        "type": "string",
+                        "description": "Username for login",
+                        "example": "sample@gmail.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Password of the user to login",
+                        "example": "sample_password"
+                    },
+                    "contact_no": {
+                        "type": "string",
+                        "description": "Contact number",
+                        "example": 639606945707
+                    },
+                    "position": {
+                        "type": "string",
+                        "description": "Permission varies dependes on position",
+                        "example": "employee"
+                    },
+                    "img_src": {
+                        "type": "string",
+                        "description": "URL of user image",
+                        "example": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/2048px-Octicons-mark-github.svg.png"
                     }
                 }
             }

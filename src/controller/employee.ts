@@ -136,8 +136,6 @@ const updateEmployee = asyncHandle(async (req: Request, res: Response) => {
 });
 
 const editInfoEmployee = asyncHandle(asyncHandle(async (req: Request, res: Response) => {
-    console.log(req.body);
-
     const requestId = req.body.employee_id || req.params.id;
     if (!requestId) throw new Error("Invalid Request: no id request");
 

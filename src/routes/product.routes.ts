@@ -9,17 +9,6 @@ routerProduct.delete("/name/:name", asyncHandle(product.deleteProductByName));
 
 routerProduct
     .route("/")
-    /**
-     * @swagger
-     * /product:
-     *   tags: Product
-     *   get:
-     *     summary: Get all product
-     *     description: Retrieve a list of all product.
-     *     responses:
-     *       200:
-     *         description: A list of product.
-     */
     .get(product.getAllProduct)
     .post(product.createProduct)
     .put(product.updateProduct);
