@@ -4,7 +4,7 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { sqlExe } from "../config/database";
 import { Employee } from "../model/types";
-import { joiEmployee } from "../model/validation";
+import { joiEmployee, joiEmployeeLogin } from "../model/validation";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { asyncHandle } from "../middleware/errorHandler";
 
@@ -23,18 +23,15 @@ function generateEmployee(): Employee {
     };
 }
 
-function booleanToInt(input: boolean) {
-    return input ? 1 : 0;
-}
-
+// also check if employee is exist
 async function findEmployeeById(employee_id: string) {
+    if (!employee_id) throw new Error("Invalid Request: no id request");
     const data = await sqlExe(
         "SELECT * FROM `employee` WHERE employee_id = ?",
         employee_id
     );
 
     if (data.length == 0) throw new Error("Invalid request: employee not exist");
-
     return data[0];
 }
 
@@ -78,10 +75,8 @@ const createEmployee = asyncHandle(async (req: Request, res: Response) => {
     const { error } = joiEmployee.validate(req.body);
     if (error?.message) throw new Error(error?.message);
 
-
     const userNameExist = await findEmployeeByUserName(employee.username);
-    if (userNameExist) throw new Error("Username is already use")
-
+    if (userNameExist) throw new Error("Invalid Request: Username is already use")
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(employee.password, salt);
@@ -98,7 +93,6 @@ const createEmployee = asyncHandle(async (req: Request, res: Response) => {
             employee.img_src
         ]
     );
-
 
     res.send("Your account has been created.").status(200);
 })
@@ -137,7 +131,6 @@ const updateEmployee = asyncHandle(async (req: Request, res: Response) => {
 
 const editInfoEmployee = asyncHandle(asyncHandle(async (req: Request, res: Response) => {
     const requestId = req.body.employee_id || req.params.id;
-    if (!requestId) throw new Error("Invalid Request: no id request");
 
     const employeeDatabase = await findEmployeeById(requestId);
     const employee: Employee = {
@@ -166,12 +159,13 @@ const editInfoEmployee = asyncHandle(asyncHandle(async (req: Request, res: Respo
 
 
 const loginEmployee = asyncHandle(async (req: Request, res: Response) => {
-    const loginData = { ...req.body };
+    const loginData = structuredClone(req.body);
+    const { error } = joiEmployeeLogin.validate(loginData);
+    if (error?.message) throw new Error(error?.message);
 
     const employee: Employee = await findEmployeeByUserName(loginData.username);
     if (!employee) throw new Error("Username not exist");
-    if (employee.position == "guest") throw new Error("Username not currently confirm");
-
+    // if (employee.position == "guest") throw new Error("Username not currently confirm");
 
     const passwordMatch = await bcrypt.compare(
         loginData.password,
@@ -193,23 +187,28 @@ const loginEmployee = asyncHandle(async (req: Request, res: Response) => {
     res.send(dataSend).status(200);
 });
 
-const authenticateEmployee = asyncHandle(async (req: Request, res: Response, next: NextFunction) => {
+const authEmployee = asyncHandle(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token)
         return res.status(401).send('Authorization token missing');
 
-    try {
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY || "") as JwtPayload;
-    } catch (error) {
-        res.status(401).send('Authorization token missing');
-    }
+    jwt.verify(token, process.env.JWT_SECRET_KEY || "") as JwtPayload;
+    next();
+});
+
+const authAdmin = asyncHandle(async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token)
+        return res.status(401).send('Authorization token missing');
+
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY || "") as JwtPayload;
+    if (["admin", "employee"].includes(decodedToken.position)) throw new Error("unauthorized token");
 
     next();
 });
 
 const getEmployeeByToken = asyncHandle(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization?.split(' ')[1];
-
     if (!token) return res.status(401).send('Authorization token missing');
 
     try {
@@ -233,17 +232,20 @@ const getEmployeeByToken = asyncHandle(async (req: Request, res: Response, next:
     res.status(401).send('Authorization token missing');
 });
 
+
+
 // exported controllers
 export default {
     getAllEmployee,
     getEmployeeById,
-    authenticateEmployee,
     loginEmployee,
     updateEmployee,
     createEmployee,
     deleteEmployeeById,
     editInfoEmployee,
     getEmployeeByToken,
+    authEmployee,
+    authAdmin,
 
     // ALL controller below will be availbe only in development
     async genereteEmployee(req: Request, res: Response) {
