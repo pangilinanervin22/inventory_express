@@ -10,6 +10,11 @@ export const joiEmployee = Joi.object({
     img_src: Joi.string().max(255).optional(),
 });
 
+export const joiEmployeeLogin = Joi.object({
+    username: Joi.string().max(70).min(5).required(),
+    password: Joi.string().max(255).min(8).required()
+})
+
 export const joiProduct = Joi.object({
     product_id: Joi.string().max(255).optional(),
     name: Joi.string().max(70).min(3).required(),
