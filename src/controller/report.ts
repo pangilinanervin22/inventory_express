@@ -6,38 +6,10 @@ const getTotalStock = asyncHandle(async (req: Request, res: Response) => {
     const data = await sqlExe(`SELECT SUM(S.quantity), P.name FROM stock AS S CROSS
         JOIN product AS P WHERE S.product_id = P.product_id GROUP BY P.product_id;`);
 
-    // total stock
-    // const data = await sqlExe(`SELECT SUM(S.quantity) FROM stock AS S;`);
-
-    // by month
-    // const data =
-    //     await sqlExe(`SELECT DATE_FORMAT(s.production_date, '%Y-%m') AS month_year, SUM(S.quantity) FROM stock AS S
-    //      GROUP BY DATE_FORMAT(s.production_date, '%Y-%m') ORDER BY DATE_FORMAT(s.production_date, '%Y-%m');`);
     res.send(data);
 });
 
-const sample = asyncHandle(async (req: Request, res: Response) => {
-    const data = await sqlExe(`SELECT SUM(S.quantity), P.name FROM stock AS S CROSS
-        JOIN product AS P WHERE S.product_id = P.product_id GROUP BY P.product_id;`);
-
-    // total stock
-    // SELECT SUM(S.quantity) FROM stock AS S;
-
-    //total stock
-    // SELECT SUM(S.quantity) as total_stock FROM stock AS S 
-    // JOIN product AS P WHERE S.product_id = P.product_id;
-
-    //SELECT DATE_FORMAT(s.sales_date, '%Y-%m') AS month_year, SUM(S.total_price) FROM sales AS S
-    //  GROUP BY DATE_FORMAT(s.sales_date, '%Y-%m') ORDER BY DATE_FORMAT(s.sales_date, '%Y-%m');
-
-    // by month
-    // const data =
-    //     await sqlExe(`SELECT DATE_FORMAT(s.production_date, '%Y-%m') AS month_year, SUM(S.quantity) FROM stock AS S
-    //  GROUP BY DATE_FORMAT(s.production_date, '%Y-%m') ORDER BY DATE_FORMAT(s.production_date, '%Y-%m'); `);
-    res.send(data);
-});
-
-const getTotal = asyncHandle(async (req: Request, res: Response) => {
+const getReportTotal = asyncHandle(async (req: Request, res: Response) => {
     const totalProduct = sqlExe(`SELECT Count(product_id) as total_product FROM product;`);
     const totalStock = sqlExe(`SELECT SUM(quantity) as total_stock FROM stock AS S;`);
     const totalSales = sqlExe(`SELECT SUM(total_price) AS total_sales FROM sales WHERE MONTH(sales_date) = MONTH(CURRENT_DATE)`);
@@ -86,10 +58,9 @@ const getLowestStock = asyncHandle(async (req: Request, res: Response) => {
 
 // exported controllers
 export default {
-    getTotal,
+    getReportTotal,
     getTopSales,
     getTotalStock,
     getSalesReport,
     getLowestStock,
-    sample
 };

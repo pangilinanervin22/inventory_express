@@ -15,7 +15,8 @@ function generateProduct(): Product {
     };
 }
 
-export async function returnProductById(product_id: string) {
+export async function findProductById(product_id: string) {
+    if (!product_id) throw new Error("Invalid Request: no id request");
     const data = await sqlExe("SELECT * FROM `product` WHERE product_id = ?", product_id);
 
     if (data.length == 0) throw new Error("Invalid request: product not exist");
@@ -40,12 +41,12 @@ const getAllProduct = asyncHandle(async (req: Request, res: Response) => {
 });
 
 const getProductById = asyncHandle(async (req: Request, res: Response) => {
-    const data = await returnProductById(req.params.id);
+    const data = await findProductById(req.params.id);
     res.send(data);
-
 })
+
 const deleteProductById = asyncHandle(async (req: Request, res: Response) => {
-    await returnProductById(req.params.id);
+    await findProductById(req.params.id);
 
     await sqlExe("DELETE FROM `product` WHERE product_id = ?", req.params.id);
     res.send("Successfully deleted").status(200);
@@ -71,11 +72,10 @@ const createProduct = asyncHandle(async (req: Request, res: Response) => {
     );
 
     res.send(product).status(200);
-
 })
 
 const updateProduct = asyncHandle(async (req: Request, res: Response) => {
-    const data = await returnProductById(req.params.id || req.body.product_id);
+    const data = await findProductById(req.params.id || req.body.product_id);
     const product: Product = { ...data, ...req.body, };
 
     const { error } = joiProduct.validate(product);
@@ -91,11 +91,11 @@ const updateProduct = asyncHandle(async (req: Request, res: Response) => {
         ]
     );
 
-    console.log("suc");
-
     res.send([data, product]).status(200);
 });
 
+
+// exported controllers
 export default {
     getAllProduct,
     deleteProductById,

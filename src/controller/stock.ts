@@ -3,10 +3,9 @@ import { faker } from "@faker-js/faker";
 import crypto from "crypto";
 import { sqlExe } from "../config/database";
 import { Sales, Stock } from "../model/types";
-import { joiSales, joiStock } from "../model/validation";
-import { returnProductById, returnProductByName } from "./product";
+import { joiStock } from "../model/validation";
+import { findProductById, returnProductByName } from "./product";
 import { asyncHandle } from "../middleware/errorHandler";
-import process from "process";
 
 function generateStock(product_id: string): Stock {
     return {
@@ -18,7 +17,8 @@ function generateStock(product_id: string): Stock {
     };
 }
 
-async function returnStockById(stock_id: string) {
+async function findStockById(stock_id: string) {
+    if (!stock_id) throw new Error("Invalid Request: no id request");
     const data = await sqlExe("SELECT * FROM `stock` WHERE stock_id = ?", stock_id);
 
     if (data.length == 0) throw new Error("Invalid request: stock not exist");
@@ -26,6 +26,7 @@ async function returnStockById(stock_id: string) {
 }
 
 async function returnStockByProductId(product_id: string) {
+    if (!product_id) throw new Error("Invalid Request: no id request");
     const data = await sqlExe(
         `SELECT SUM(S.quantity), P.name FROM stock AS S CROSS JOIN 
         product AS P WHERE S.product_id = ?;`,
@@ -45,7 +46,7 @@ const getAllStock = asyncHandle(async (req: Request, res: Response) => {
 });
 
 const getStockById = asyncHandle(async (req: Request, res: Response) => {
-    await returnStockById(req.params.id);
+    await findStockById(req.params.id);
     const data = await sqlExe(
         `SELECT S.stock_id, P.product_id, P.name, S.quantity, S.production_date, S.expiration_date 
         FROM stock AS S CROSS JOIN product AS P WHERE S.stock_id = ? and S.product_id = P.product_id;`,
@@ -56,7 +57,7 @@ const getStockById = asyncHandle(async (req: Request, res: Response) => {
 });
 
 const deleteStockById = asyncHandle(async (req: Request, res: Response) => {
-    await returnStockById(req.params.id);
+    await findStockById(req.params.id);
 
     await sqlExe("DELETE FROM stock WHERE stock_id = ?", req.params.id);
     res.send("Successfully deleted").status(200);
@@ -64,7 +65,7 @@ const deleteStockById = asyncHandle(async (req: Request, res: Response) => {
 
 
 const createStock = asyncHandle(async (req: Request, res: Response) => {
-    const product = await returnProductById(req.body.product_id);
+    const product = await findProductById(req.body.product_id);
     const stock: Stock = {
         ...req.body,
         stock_id: crypto.randomUUID(),
@@ -89,7 +90,7 @@ const createStock = asyncHandle(async (req: Request, res: Response) => {
 });
 
 const updateStock = asyncHandle(async (req: Request, res: Response) => {
-    const data: Stock = await returnStockById(req.params.id || req.body.stock_id);
+    const data: Stock = await findStockById(req.params.id || req.body.stock_id);
     const stock: Stock = { ...data, ...req.body };
 
     const { error } = joiStock.validate(stock);
@@ -116,17 +117,12 @@ const posAction = asyncHandle(async (req: Request, res: Response) => {
     console.log(requestDataList);
 
     if (requestDataList.length === 0) throw new Error("List of request is empty")
-    // const requestData = [
-    //     { quantity: 1, stock_id: 'def67965-4774-4b54-86c5-553adf36f324', price: 180 }, //40
-    //     { quantity: 100, stock_id: '4b41c425-9169-4d2f-96f6-2ec3b2faebdb', price: 40 }, // 30
-    //     { stock_id: "cb2c7d94-6cd1-43be-ad6c-246bfeb7e601", price: 160, quantity: 12, } //12
-    // ];
 
     //validation of list of data
     for await (const item of requestDataList) {
         if (item.quantity < 1) throw new Error("Request of quantity most not below 1");
 
-        const data: Stock = await returnStockById(item.stock_id);
+        const data: Stock = await findStockById(item.stock_id);
         if (item.quantity > data.quantity) throw new Error("Request of quantity is greate than orignal");
         else if ((item.quantity - data.quantity) === 0) continue;
 
@@ -137,7 +133,7 @@ const posAction = asyncHandle(async (req: Request, res: Response) => {
 
     // process list of pos data
     const procsss = requestDataList.map(async (item: any) => {
-        const stockData: Stock = await returnStockById(item.stock_id);
+        const stockData: Stock = await findStockById(item.stock_id);
         if ((item.quantity - stockData.quantity) === 0)
             await sqlExe("DELETE FROM stock WHERE stock_id = ?", item.stock_id);
         else {
@@ -181,6 +177,7 @@ export default {
     updateStock,
     deleteStockById,
     posAction,
+
     // ALL controller below will be availbe only in development
     async generateStock(req: Request, res: Response) {
         const product = await returnProductByName(req.body.name);

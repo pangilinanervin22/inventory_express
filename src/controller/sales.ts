@@ -4,7 +4,7 @@ import crypto from "crypto";
 import { sqlExe } from "../config/database";
 import { Sales } from "../model/types";
 import { joiSales } from "../model/validation";
-import { returnProductById, returnProductByName } from "./product";
+import { findProductById, returnProductByName } from "./product";
 import { asyncHandle } from "../middleware/errorHandler";
 
 function generateSales(product_id: string): Sales {
@@ -16,7 +16,8 @@ function generateSales(product_id: string): Sales {
     };
 }
 
-async function returnSaleById(sales_id: string) {
+async function findSalesById(sales_id: string) {
+    if (!sales_id) throw new Error("Invalid Request: no id request");
     const data = await sqlExe(
         "SELECT * FROM `sales` WHERE sales_id = ?",
         sales_id
@@ -46,7 +47,7 @@ const getSalesById = asyncHandle(async (req: Request, res: Response) => {
 
 
 const deleteSalesById = asyncHandle(async (req: Request, res: Response) => {
-    await returnSaleById(req.params.id);
+    await findSalesById(req.params.id);
 
     await sqlExe("DELETE FROM sales WHERE sales_id = ?", req.params.id);
     res.send("Successfully deleted").status(200);
@@ -76,7 +77,7 @@ const createSales = asyncHandle(async (req: Request, res: Response) => {
 });
 
 const updateSales = asyncHandle(async (req: Request, res: Response) => {
-    const data = await returnSaleById(req.params.id || req.body.sales_id);
+    const data = await findSalesById(req.params.id || req.body.sales_id);
     const sales: Sales = { ...data, ...req.body };
 
     console.log(sales);
@@ -96,9 +97,6 @@ const updateSales = asyncHandle(async (req: Request, res: Response) => {
 
     res.send([data, sales]).status(200);
 });
-
-
-
 
 // exported controllers
 export default {

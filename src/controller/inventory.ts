@@ -4,7 +4,7 @@ import crypto from "crypto";
 import { sqlExe } from "../config/database";
 import { Stock } from "../model/types";
 import { joiStock } from "../model/validation";
-import { returnProductById, returnProductByName } from "./product";
+import { findProductById, returnProductByName } from "./product";
 import { asyncHandle } from "../middleware/errorHandler";
 
 function generateStock(product_id: string): Stock {
@@ -47,13 +47,6 @@ const getTotalStock = asyncHandle(async (req: Request, res: Response) => {
     const data = await sqlExe(`SELECT SUM(S.quantity), P.name FROM stock AS S CROSS
         JOIN product AS P WHERE S.product_id = P.product_id GROUP BY P.product_id;`);
 
-    // total stock
-    // const data = await sqlExe(`SELECT SUM(S.quantity) FROM stock AS S;`);
-
-    // by month
-    // const data =
-    //     await sqlExe(`SELECT DATE_FORMAT(s.production_date, '%Y-%m') AS month_year, SUM(S.quantity) FROM stock AS S
-    //      GROUP BY DATE_FORMAT(s.production_date, '%Y-%m') ORDER BY DATE_FORMAT(s.production_date, '%Y-%m');`);
     res.send(data);
 });
 
@@ -78,7 +71,7 @@ const deleteStockById = asyncHandle(async (req: Request, res: Response) => {
 const postStock = asyncHandle(async (req: Request, res: Response) => {
     console.log(req.body);
 
-    const product = await returnProductById(req.body.product_id);
+    const product = await findProductById(req.body.product_id);
     const stock: Stock = {
         ...req.body,
         stock_id: crypto.randomUUID(),
