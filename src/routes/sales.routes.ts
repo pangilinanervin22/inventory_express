@@ -1,6 +1,5 @@
 import express from "express";
 import sales from "../controller/sales";
-import stock from "../controller/stock";
 import employee from "../controller/employee";
 
 
@@ -9,7 +8,7 @@ const routerSales = express.Router();
 if (process.env.NODE_ENV == "dev")
     routerSales.post("/generate", sales.generateSales);
 
-routerSales.post("/pos", [employee.authEmployee], stock.posAction);
+routerSales.post("/pos", [employee.authEmployee], sales.posAction);
 routerSales.get("/total", sales.getAllSales);
 
 routerSales
