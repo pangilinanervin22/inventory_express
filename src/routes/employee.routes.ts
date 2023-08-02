@@ -4,24 +4,28 @@ import employee from "../controller/employee";
 
 const routerEmployee = express.Router();
 
-routerEmployee.get("/employee", employee.getAllEmployee);
-routerEmployee.put("/edit/", employee.editInfoEmployee);
+if (process.env.NODE_ENV == "dev") {
+    routerEmployee.post("/generate", [employee.authEmployee], employee.genereteEmployee);
+    routerEmployee.post("/auth_test", [employee.authEmployee], employee.getAllEmployee);
+    routerEmployee.post("/test_admin", [employee.authAdmin], employee.getAllEmployee);
+
+    routerEmployee.delete("/name/:name", [employee.authEmployee], employee.deleteEmployeeByName);
+}
+
 routerEmployee.get("/token/", employee.getEmployeeByToken)
 routerEmployee.post("/login", employee.loginEmployee);
-routerEmployee.delete("/name/:name", employee.deleteEmployeeByName);
-routerEmployee.post("/generate", [employee.authenticateEmployee], employee.genereteEmployee);
-routerEmployee.get("/auth", [employee.authenticateEmployee], employee.getAllEmployee);
+routerEmployee.put("/edit/", [employee.authEmployee], employee.editInfoEmployee);
 
 routerEmployee
     .route("/")
-    .get(employee.getAllEmployee)
-    .post(employee.createEmployee)
-    .put(employee.updateEmployee)
+    .get([employee.authEmployee], employee.getAllEmployee)
+    .post([employee.authEmployee], employee.createEmployee)
+    .put([employee.authAdmin], employee.updateEmployee)
 
 routerEmployee
     .route("/:id")
-    .get(employee.getEmployeeById)
-    .put(employee.updateEmployee)
-    .delete(employee.deleteEmployeeById);
+    .get([employee.authEmployee], employee.getEmployeeById)
+    .put([employee.authAdmin], employee.updateEmployee)
+    .delete([employee.authAdmin], employee.deleteEmployeeById);
 
 export default routerEmployee;

@@ -1,24 +1,25 @@
 import express from "express";
 import product from "../controller/product";
 import { asyncHandle } from "../middleware/errorHandler";
+import employee from "../controller/employee";
 
 const routerProduct = express.Router();
 
-routerProduct.post("/generate", asyncHandle(product.generateProduct));
-routerProduct.delete("/name/:name", asyncHandle(product.deleteProductByName));
+if (process.env.NODE_ENV == "dev")
+    routerProduct.post("/generate", [employee.authEmployee], asyncHandle(product.generateProduct));
 
 routerProduct
     .route("/")
     .get(product.getAllProduct)
-    .post(product.createProduct)
-    .put(product.updateProduct);
+    .post([employee.authEmployee], product.createProduct)
+    .put([employee.authEmployee], product.updateProduct);
 
 routerProduct
     .route("/:id")
-    .get(product.getProductById)
-    .post(product.createProduct)
-    .delete(product.deleteProductById)
-    .put(product.updateProduct);
+    .get([employee.authEmployee], product.getProductById)
+    .post([employee.authEmployee], product.createProduct)
+    .delete([employee.authEmployee], product.deleteProductById)
+    .put([employee.authEmployee], product.updateProduct);
 
 
 export default routerProduct;

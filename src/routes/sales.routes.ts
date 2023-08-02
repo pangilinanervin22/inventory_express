@@ -6,10 +6,11 @@ import employee from "../controller/employee";
 
 const routerSales = express.Router();
 
-routerSales.post("/generate", sales.generateSales);
-routerSales.post("/pos", [employee.authenticateEmployee], stock.posAction);
-routerSales.get("/total", sales.getAllSales);
+if (process.env.NODE_ENV == "dev")
+    routerSales.post("/generate", sales.generateSales);
 
+routerSales.post("/pos", [employee.authEmployee], stock.posAction);
+routerSales.get("/total", sales.getAllSales);
 
 routerSales
     .route("/:id")
@@ -17,14 +18,12 @@ routerSales
     .delete(sales.deleteSalesById)
     .put(sales.updateSales);
 
-
 routerSales
     .route("/")
     .get(sales.getAllSales)
     .post(sales.createSales)
     .put(sales.updateSales)
     .post(sales.createSales);
-
 
 
 export default routerSales;
