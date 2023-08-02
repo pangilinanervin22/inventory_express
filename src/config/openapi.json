@@ -1,9 +1,9 @@
 {
     "openapi": "3.0.2",
     "info": {
-        "title": "Product API",
+        "title": "Chocolate Inventory API",
         "version": "1.0.0",
-        "description": "API endpoints for managing products"
+        "description": "All API endpoints"
     },
     "servers": [
         {
@@ -12,11 +12,16 @@
         }
     ],
     "paths": {
-        "/product": {
+        "/employee": {
             "get": {
-                "summary": "Get all products",
+                "summary": "Get all employee",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
-                    "Product"
+                    "Employee"
                 ],
                 "responses": {
                     "200": {
@@ -26,7 +31,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Product"
+                                        "$ref": "#/components/schemas/Employee"
                                     }
                                 }
                             }
@@ -35,27 +40,112 @@
                 }
             },
             "post": {
-                "summary": "Create a new product",
+                "summary": "Register a employee",
                 "tags": [
-                    "Product"
+                    "Auth and Register"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
                 ],
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Product"
+                                "$ref": "#/components/schemas/Employee"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "description": "Product created successfully",
+                        "description": "Employee created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Product"
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "message": "Your account has been created."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/login": {
+            "post": {
+                "summary": "Login User",
+                "tags": [
+                    "Auth and Register"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "The username of the user.",
+                                        "example": "example@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "description": "The password of the user.",
+                                        "example": "mysecretpassword"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful login response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "description": "An authentication token for the user.",
+                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjM0NTY3ODkwLCJpYXQiOjE2MzE0ODQxMDAsImV4cCI6MTYzMTQ4NzUwMH0.lfzD4bsZIYX4CwciB2j7I9EYi4-tJUM4P8sDNRtawKI"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "description": "Error message for unauthorized login.",
+                                            "example": "Invalid credentials. Please try again."
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -67,7 +157,7 @@
             "get": {
                 "summary": "Get a product by ID",
                 "tags": [
-                    "Product"
+                    "Employee"
                 ],
                 "parameters": [
                     {
@@ -95,8 +185,13 @@
             },
             "put": {
                 "summary": "Update a product",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
-                    "Product"
+                    "Employee"
                 ],
                 "parameters": [
                     {
@@ -120,7 +215,7 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Product updated successfully",
                         "content": {
                             "application/json": {
@@ -134,6 +229,177 @@
             },
             "delete": {
                 "summary": "Delete a product",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "product_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "ID of the product"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product deleted successfully"
+                    }
+                }
+            }
+        },
+        "/product": {
+            "get": {
+                "summary": "Get all products",
+                "tags": [
+                    "Product"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new product",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Product"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Product created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "message": "Your account has been created."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/{employee_id}": {
+            "get": {
+                "summary": "Get a employee by ID",
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "employee_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "ID of the employee"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Employee"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a employee",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "employee_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "ID of the employee"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Employee"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Employee updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Employee"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a product",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Product"
                 ],
@@ -149,7 +415,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
+                    "200": {
                         "description": "Product deleted successfully"
                     }
                 }
@@ -192,6 +458,11 @@
             },
             "post": {
                 "summary": "Create a new Stock",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Stock"
                 ],
@@ -251,6 +522,11 @@
             },
             "put": {
                 "summary": "Update a Stock",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Stock"
                 ],
@@ -276,7 +552,7 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Stock updated successfully",
                         "content": {
                             "application/json": {
@@ -290,6 +566,11 @@
             },
             "delete": {
                 "summary": "Delete a stock",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Stock"
                 ],
@@ -305,7 +586,7 @@
                     }
                 ],
                 "responses": {
-                    "204": {
+                    "200": {
                         "description": "Stock deleted successfully"
                     }
                 }
@@ -335,6 +616,11 @@
             },
             "post": {
                 "summary": "Create a new sales",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Sales"
                 ],
@@ -424,7 +710,7 @@
                     }
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Sales updated successfully",
                         "content": {
                             "application/json": {
@@ -438,6 +724,11 @@
             },
             "delete": {
                 "summary": "Delete a sales",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "Sales"
                 ],
@@ -453,39 +744,11 @@
                     }
                 ],
                 "responses": {
-                    "204": {
+                    "200": {
                         "description": "Sales deleted successfully"
                     },
                     "401": {
                         "$ref": "#/components/responses/UnauthorizedError"
-                    }
-                }
-            }
-        },
-        "/employee/auth": {
-            "get": {
-                "summary": "Get all employee (auth)",
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "tags": [
-                    "Emplyoee"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Employee"
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -559,7 +822,7 @@
                     },
                     "quantity": {
                         "type": "number",
-                        "description": "The qunatity of stock product",
+                        "description": "The quantity of stock product",
                         "example": 30
                     },
                     "production_date": {
@@ -614,7 +877,7 @@
                     "contact_no"
                 ],
                 "properties": {
-                    "emyployee_id": {
+                    "employee_id": {
                         "type": "string",
                         "description": "The ID of the employee",
                         "example": "aaaa-bbbb-cccc-ddd",
@@ -642,13 +905,13 @@
                     },
                     "position": {
                         "type": "string",
-                        "description": "Permission varies dependes on position",
+                        "description": "Permission varies depends on position",
                         "example": "employee"
                     },
                     "img_src": {
                         "type": "string",
                         "description": "URL of user image",
-                        "example": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/2048px-Octicons-mark-github.svg.png"
+                        "example": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/2008px-Octicons-mark-github.svg.png"
                     }
                 }
             }
