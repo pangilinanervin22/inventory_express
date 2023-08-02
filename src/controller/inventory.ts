@@ -65,7 +65,7 @@ const deleteStockById = asyncHandle(async (req: Request, res: Response) => {
     await returnStockById(req.params.id);
 
     await sqlExe("DELETE FROM stock WHERE stock_id = ?", req.params.id);
-    res.send("Successfully deleted").status(200);
+    res.send("Stock successfully deleted").status(200);
 });
 
 const postStock = asyncHandle(async (req: Request, res: Response) => {
@@ -92,7 +92,7 @@ const postStock = asyncHandle(async (req: Request, res: Response) => {
         ]
     );
 
-    res.send(stock).status(200);
+    res.send("Stock successfully created").status(201);
 });
 
 const updateStock = asyncHandle(async (req: Request, res: Response) => {
@@ -113,8 +113,7 @@ const updateStock = asyncHandle(async (req: Request, res: Response) => {
         ]
     );
 
-    console.log(fetch);
-    res.send([data, stock]).status(200);
+    res.send("Stock successfully updated").status(201);
 });
 
 
@@ -127,7 +126,7 @@ export default {
     postStock,
     updateStock,
 
-    // ALL controller below will be availbe only in development
+    // ALL controller below will be available only in development
     async generateStock(req: Request, res: Response) {
         const product = await returnProductByName(req.body.name);
         const stock = generateStock(product.product_id);

@@ -17,7 +17,7 @@ function generateStock(product_id: string): Stock {
     };
 }
 
-async function findStockById(stock_id: string) {
+export async function findStockById(stock_id: string) {
     if (!stock_id) throw new Error("Invalid Request: no id request");
     const data = await sqlExe("SELECT * FROM `stock` WHERE stock_id = ?", stock_id);
 
@@ -86,7 +86,7 @@ const createStock = asyncHandle(async (req: Request, res: Response) => {
         ]
     );
 
-    res.send(stock).status(200);
+    res.send(stock).status(201);
 });
 
 const updateStock = asyncHandle(async (req: Request, res: Response) => {
@@ -109,74 +109,17 @@ const updateStock = asyncHandle(async (req: Request, res: Response) => {
     );
 
     console.log(fetch);
-    res.send([data, stock]).status(200);
+    res.send([data, stock]).status(201);
 });
 
-const posAction = asyncHandle(async (req: Request, res: Response) => {
-    const requestDataList = req.body || [];
-    console.log(requestDataList);
-
-    if (requestDataList.length === 0) throw new Error("List of request is empty")
-
-    //validation of list of data
-    for await (const item of requestDataList) {
-        if (item.quantity < 1) throw new Error("Request of quantity most not below 1");
-
-        const data: Stock = await findStockById(item.stock_id);
-        if (item.quantity > data.quantity) throw new Error("Request of quantity is greate than orignal");
-        else if ((item.quantity - data.quantity) === 0) continue;
-
-        const requestStock: Stock = { ...data, quantity: (data.quantity - item.quantity) };
-        const { error } = joiStock.validate(requestStock);
-        if (error?.message) throw new Error(error?.message);
-    }
-
-    // process list of pos data
-    const procsss = requestDataList.map(async (item: any) => {
-        const stockData: Stock = await findStockById(item.stock_id);
-        if ((item.quantity - stockData.quantity) === 0)
-            await sqlExe("DELETE FROM stock WHERE stock_id = ?", item.stock_id);
-        else {
-            const requestStock: Stock = { ...stockData, quantity: (stockData.quantity - item.quantity) };
-            await sqlExe(
-                "UPDATE `stock` SET `quantity` = ? WHERE stock_id = ?;",
-                [
-                    requestStock.quantity,
-                    requestStock.stock_id
-                ]
-            );
-        }
-
-        const sales: Sales = {
-            sales_id: crypto.randomUUID(),
-            product_id: stockData.product_id,
-            sales_date: new Date(),
-            total_price: item.price * item.quantity
-        };
-
-        return await sqlExe(
-            "INSERT INTO `sales`(`sales_id`, `product_id`, `total_price`, `sales_date`) VALUES (?,?,?,?);",
-            [
-                sales.sales_id,
-                sales.product_id,
-                sales.total_price,
-                sales.sales_date,
-            ]
-        );
-    })
-
-    await Promise.all(procsss)
-    res.send("Sales are successfully process").status(200);
-});
 
 // exported controllers
 export default {
     getAllStock,
     getStockById,
+    deleteStockById,
     createStock,
     updateStock,
-    deleteStockById,
-    posAction,
 
     // ALL controller below will be availbe only in development
     async generateStock(req: Request, res: Response) {

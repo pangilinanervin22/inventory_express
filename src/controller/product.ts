@@ -49,7 +49,7 @@ const deleteProductById = asyncHandle(async (req: Request, res: Response) => {
     await findProductById(req.params.id);
 
     await sqlExe("DELETE FROM `product` WHERE product_id = ?", req.params.id);
-    res.send("Successfully deleted").status(200);
+    res.send("Product successfully deleted").status(200);
 })
 
 const createProduct = asyncHandle(async (req: Request, res: Response) => {
@@ -71,7 +71,7 @@ const createProduct = asyncHandle(async (req: Request, res: Response) => {
         ]
     );
 
-    res.send(product).status(200);
+    res.send("Product successfully created").status(201);
 })
 
 const updateProduct = asyncHandle(async (req: Request, res: Response) => {
@@ -91,7 +91,7 @@ const updateProduct = asyncHandle(async (req: Request, res: Response) => {
         ]
     );
 
-    res.send([data, product]).status(200);
+    res.send("Product successfully updated").status(201);
 });
 
 
@@ -102,7 +102,8 @@ export default {
     getProductById,
     createProduct,
     updateProduct,
-    // ALL controller below will be availbe only in development
+
+    // ALL controller below will be available only in development
     async generateProduct(req: Request, res: Response) {
         const product = await generateProduct();
         const fetch = await sqlExe(
