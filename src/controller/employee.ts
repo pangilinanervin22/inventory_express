@@ -94,7 +94,18 @@ const createEmployee = asyncHandle(async (req: Request, res: Response) => {
         ]
     );
 
-    res.send("Your account will pending").status(200);
+    const tokenCreate = jwt.sign({ employee_id: employee.employee_id, position: employee.position },
+        process.env.JWT_SECRET_KEY || "",
+        { expiresIn: "3d", }
+    );
+
+    const infoData = {
+        name: employee.name,
+        img_src: employee.img_src,
+        position: employee.position,
+    }
+
+    res.send({ token: tokenCreate, info: infoData }).status(200);
 })
 
 const updateEmployee = asyncHandle(async (req: Request, res: Response) => {
@@ -165,7 +176,7 @@ const loginEmployee = asyncHandle(async (req: Request, res: Response) => {
 
     const employee: Employee = await findEmployeeByUserName(loginData.username);
     if (!employee) throw new Error("Invalid credentials: Username not exist");
-    if (employee.position == "guest") throw new Error("Invalid Credentials: Username not currently confirm");
+    // if (employee.position == "guest") throw new Error("Invalid Credentials: Username not currently confirm");
 
     const passwordMatch = await bcrypt.compare(
         loginData.password,
@@ -178,11 +189,19 @@ const loginEmployee = asyncHandle(async (req: Request, res: Response) => {
         { expiresIn: "3d", }
     );
 
-    res.send({ token: tokenCreate }).status(200);
+    const infoData = {
+        name: employee.name,
+        img_src: employee.img_src,
+        position: employee.position,
+    }
+
+    res.send({ token: tokenCreate, info: infoData }).status(200);
 });
 
 const authEmployee = asyncHandle(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization?.split(' ')[1];
+    console.log(token);
+
     if (!token)
         return res.status(401).send('Authorization token missing');
 
