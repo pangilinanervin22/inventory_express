@@ -10,8 +10,6 @@ paths:
   "/employee":
      get:
       summary: Get all employee
-      security:
-        -  bearerAuth: [] 
       tags:
         - Employee
       responses:
@@ -47,6 +45,67 @@ paths:
                     type: string
                 example:
                   message: "Your account has been created."
+  "/employee/{employee_id}":
+    get:
+      summary: Get a employee by ID
+      tags:
+        - Employee
+      parameters:
+        - in: path
+          name: employee_id
+          schema:
+            type: string
+          required: true
+          description: ID of the employee
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+    put:
+      summary: Update a employee
+      security:
+        - bearerAuth: []
+      tags:
+        - Employee
+      parameters:
+        - in: path
+          name: employee_id
+          schema:
+            type: string
+          required: true
+          description: ID of the employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Employee"
+      responses:
+        "201":
+          description: Employee updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+    delete:
+      summary: Delete a employee
+      security:
+        - bearerAuth: []
+      tags:
+        - Employee
+      parameters:
+        - in: path
+          name: employee_id
+          schema:
+            type: string
+          required: true
+          description: ID of the employee
+      responses:
+        "200":
+          description: Employee deleted successfully
   "/employee/login":
     post:
       summary: Login User
@@ -92,68 +151,7 @@ paths:
                   error:
                     type: string
                     description: Error message for unauthorized login.
-                    example: Invalid credentials. Please try again.
-  "/product/{product_id}":
-    get:
-      summary: Get a product by ID
-      tags:
-        - Employee
-      parameters:
-        - in: path
-          name: product_id
-          schema:
-            type: string
-          required: true
-          description: ID of the product
-      responses:
-        "200":
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Product"
-    put:
-      summary: Update a product
-      security:
-        - bearerAuth: []
-      tags:
-        - Employee
-      parameters:
-        - in: path
-          name: product_id
-          schema:
-            type: string
-          required: true
-          description: ID of the product
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Product"
-      responses:
-        "201":
-          description: Product updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Product"
-    delete:
-      summary: Delete a product
-      security:
-        - bearerAuth: []
-      tags:
-        - Employee
-      parameters:
-        - in: path
-          name: product_id
-          schema:
-            type: string
-          required: true
-          description: ID of the product
-      responses:
-        "200":
-          description: Product deleted successfully
+                    example: Invalid credentials. Please try again. 
   "/product":
     get:
       summary: Get all products
@@ -192,51 +190,51 @@ paths:
                     type: string
                 example:
                   message: "Your account has been created."
-  "/employee/{employee_id}":
+  "/product/{product_id}":
     get:
-      summary: Get a employee by ID
+      summary: Get a product by ID
       tags:
-        - Employee
+        - Product
       parameters:
         - in: path
-          name: employee_id
+          name: product_id
           schema:
             type: string
           required: true
-          description: ID of the employee
+          description: ID of the product
       responses:
         "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Employee"
+                $ref: "#/components/schemas/Product"
     put:
-      summary: Update a employee
+      summary: Update a product
       security:
         - bearerAuth: []
       tags:
         - Product
       parameters:
         - in: path
-          name: employee_id
+          name: product_id
           schema:
             type: string
           required: true
-          description: ID of the employee
+          description: ID of the product
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Employee"
+              $ref: "#/components/schemas/Product"
       responses:
         "201":
-          description: Employee updated successfully
+          description: Product updated successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Employee"
+                $ref: "#/components/schemas/Product"
     delete:
       summary: Delete a product
       security:
