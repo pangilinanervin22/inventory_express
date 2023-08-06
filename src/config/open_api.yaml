@@ -2,13 +2,13 @@ openapi: 3.0.2
 info:
   title: Chocolate Inventory API
   version: 1.0.0
-  description: All API endpoints 
+  description: All API endpoints
 servers:
   - url: http://localhost:5000/api
     description: Local host server
 paths:
   "/employee":
-     get:
+    get:
       summary: Get all employee
       tags:
         - Employee
@@ -21,7 +21,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Employee"
-     post:
+    post:
       summary: Register a employee
       tags:
         - "Auth and Register"
@@ -40,11 +40,28 @@ paths:
             application/json:
               schema:
                 type: object
+                description: The main data object.
                 properties:
-                  message:
+                  token:
                     type: string
-                example:
-                  message: "Your account has been created."
+                    description: bearer token
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+                  info:
+                    type: object
+                    description: Info of the employee.
+                    properties:
+                      name:
+                        type: string
+                        description: name of the employee.
+                        example: Ervin Pangilinan
+                      img_src:
+                        type: string
+                        description: Profile picture of the employee.
+                        example: https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/2008px-Octicons-mark-github.svg.png
+                      position:
+                        type: string
+                        description: Position of the employee
+                        example: admin
   "/employee/{employee_id}":
     get:
       summary: Get a employee by ID
@@ -116,7 +133,7 @@ paths:
       requestBody:
         required: true
         content:
-           application/json:
+          application/json:
             schema:
               type: object
               properties:
@@ -130,18 +147,36 @@ paths:
                   description: The password of the user.
                   example: mysecretpassword
       responses:
-        '201':
+        "201":
           description: Successful login response
           content:
             application/json:
               schema:
                 type: object
+                description: The main data object.
                 properties:
                   token:
                     type: string
-                    description: An authentication token for the user.
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjM0NTY3ODkwLCJpYXQiOjE2MzE0ODQxMDAsImV4cCI6MTYzMTQ4NzUwMH0.lfzD4bsZIYX4CwciB2j7I9EYi4-tJUM4P8sDNRtawKI
-        '401':
+                    description: bearer token
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+                  info:
+                    type: object
+                    description: Info of the employee.
+                    properties:
+                      name:
+                        type: string
+                        description: name of the employee.
+                        example: Ervin Pangilinan
+                      img_src:
+                        type: string
+                        description: Profile picture of the employee.
+                        example: https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/2008px-Octicons-mark-github.svg.png
+                      position:
+                        type: string
+                        description: Position of the employee
+                        example: admin
+
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -151,7 +186,7 @@ paths:
                   error:
                     type: string
                     description: Error message for unauthorized login.
-                    example: Invalid credentials. Please try again. 
+                    example: Invalid credentials. Please try again.
   "/product":
     get:
       summary: Get all products
@@ -266,11 +301,11 @@ paths:
                 items:
                   allOf:
                     - $ref: "#/components/schemas/Stock"
-                    - type: object 
+                    - type: object
                       properties:
-                          name:
-                            type: string
-                            example: Toblerone Original
+                        name:
+                          type: string
+                          example: Toblerone Original
     post:
       summary: Create a new Stock
       security:
@@ -293,7 +328,7 @@ paths:
   "/stock/{stock_id}":
     get:
       summary: Get a stock by ID
-      
+
       tags:
         - Stock
       parameters:
@@ -446,12 +481,12 @@ paths:
       responses:
         "200":
           description: Sales deleted successfully
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'   
-                  
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
 components:
   securitySchemes:
-    bearerAuth:            # arbitrary name for the security scheme
+    bearerAuth: # arbitrary name for the security scheme
       type: http
       scheme: bearer
       bearerFormat: JWT
@@ -459,7 +494,7 @@ components:
   responses:
     UnauthorizedError:
       description: Access token is missing or invalid
-  
+
   schemas:
     Product:
       type: object
@@ -537,7 +572,7 @@ components:
           example: 30
         sales_date:
           type: string
-          description: Date of the sales 
+          description: Date of the sales
           example: 2023-06-14
     Employee:
       type: object
