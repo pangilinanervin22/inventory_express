@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { faker } from "@faker-js/faker";
 import crypto from "crypto";
 import { sqlExe } from "../config/database";
-import { Product } from "../model/types";
-import { joiProduct } from "../model/validation";
+import { Product } from "../types";
+import { joiProduct } from "../types/validation";
 import { asyncHandle } from "../middleware/errorHandler";
 
 function generateProduct(): Product {

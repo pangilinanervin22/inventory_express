@@ -3,8 +3,8 @@ import { faker } from "@faker-js/faker";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { sqlExe } from "../config/database";
-import { Employee } from "../model/types";
-import { joiEmployee, joiEmployeeLogin } from "../model/validation";
+import { Employee } from "../types";
+import { joiEmployee, joiEmployeeLogin } from "../types/validation";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { asyncHandle } from "../middleware/errorHandler";
 

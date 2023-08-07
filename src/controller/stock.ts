@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { faker } from "@faker-js/faker";
 import crypto from "crypto";
 import { sqlExe } from "../config/database";
-import { Sales, Stock } from "../model/types";
-import { joiStock } from "../model/validation";
+import { Sales, Stock } from "../types";
+import { joiStock } from "../types/validation";
 import { findProductById, returnProductByName } from "./product";
 import { asyncHandle } from "../middleware/errorHandler";
 
